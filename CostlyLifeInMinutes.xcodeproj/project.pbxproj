@@ -404,6 +404,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Costly reads your health data to calculate minutes gained or lost from your daily activities.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Costly uses the camera to scan food and drinks to log their time impact.";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationQueriesSchemes = "instagram-stories";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -440,6 +441,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Costly reads your health data to calculate minutes gained or lost from your daily activities.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Costly uses the camera to scan food and drinks to log their time impact.";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationQueriesSchemes = "instagram-stories";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

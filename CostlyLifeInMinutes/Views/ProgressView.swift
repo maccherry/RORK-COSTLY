@@ -6,8 +6,8 @@ struct LifeProgressView: View {
     @State private var appeared: Bool = false
     @State private var animateProgress: Bool = false
     @State private var selectedPeriod: TimePeriod = .week
-    @State private var showShareSheet: Bool = false
-    @State private var shareImage: UIImage?
+    @State private var showFallbackShareSheet: Bool = false
+    @State private var fallbackShareImage: UIImage?
 
     private enum TimePeriod: String, CaseIterable {
         case week = "7 Days"
@@ -145,8 +145,8 @@ struct LifeProgressView: View {
             withAnimation(.spring(response: 0.8, dampingFraction: 0.8)) { appeared = true }
             withAnimation(.spring(response: 1.4, dampingFraction: 0.7).delay(0.3)) { animateProgress = true }
         }
-        .sheet(isPresented: $showShareSheet) {
-            if let image = shareImage {
+        .sheet(isPresented: $showFallbackShareSheet) {
+            if let image = fallbackShareImage {
                 ShareSheet(items: [image])
             }
         }

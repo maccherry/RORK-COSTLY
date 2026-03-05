@@ -10,8 +10,8 @@ struct LogActivityView: View {
     @State private var loggedActivityName: String?
     @State private var appeared: Bool = false
     @State private var shutterScale: CGFloat = 1.0
-    @State private var showShareSheet: Bool = false
-    @State private var shareImage: UIImage?
+    @State private var showFallbackShareSheet: Bool = false
+    @State private var fallbackShareImage: UIImage?
     @State private var showPaywall: Bool = false
     let store: DataStore
     var costlyAge: Double = 0
@@ -345,20 +345,33 @@ struct LogActivityView: View {
 
                     Button {
                         store.logActivity(activity)
-                        shareImage = ShareCardGenerator.renderImage(
+                        guard let image = ShareCardGenerator.renderImage(
                             activityName: activity.name,
                             activityIcon: activity.icon,
                             minutesDelta: activity.minutesDelta,
                             costlyAge: costlyAge
-                        )
-                        showShareSheet = true
+                        ) else { return }
+                        if InstagramStoriesService.canShareToStories {
+                            InstagramStoriesService.shareToStories(image)
+                        } else {
+                            fallbackShareImage = image
+                            showFallbackShareSheet = true
+                        }
                     } label: {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 18, weight: .medium))
+                        Image(systemName: "camera.fill")
+                            .font(.system(size: 16, weight: .medium))
                             .foregroundStyle(.white)
                             .frame(width: 50, height: 50)
                             .background(GlassTheme.accent)
                             .clipShape(.rect(cornerRadius: 14))
+                            .overlay(alignment: .topTrailing) {
+                                Image("instagram_icon")
+                                    .resizable()
+                                    .frame(width: 16, height: 16)
+                                    .clipShape(Circle())
+                                    .offset(x: 4, y: -4)
+                                    .opacity(0)
+                            }
                     }
                     .buttonStyle(PremiumCTAButtonStyle())
                 }
@@ -367,8 +380,8 @@ struct LogActivityView: View {
             .glassCard(cornerRadius: 22)
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
-            .sheet(isPresented: $showShareSheet) {
-                if let image = shareImage {
+            .sheet(isPresented: $showFallbackShareSheet) {
+                if let image = fallbackShareImage {
                     ShareSheet(items: [image])
                 }
             }
