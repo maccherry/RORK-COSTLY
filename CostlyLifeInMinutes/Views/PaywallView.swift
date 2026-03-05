@@ -7,6 +7,14 @@ struct PaywallView: View {
     @State private var appeared: Bool = false
 
     let store: DataStore
+    let allowDismiss: Bool
+    var onSubscribe: (() -> Void)?
+
+    init(store: DataStore, allowDismiss: Bool = false, onSubscribe: (() -> Void)? = nil) {
+        self.store = store
+        self.allowDismiss = allowDismiss
+        self.onSubscribe = onSubscribe
+    }
 
     nonisolated enum Plan: String, CaseIterable {
         case monthly = "Monthly"
@@ -43,36 +51,13 @@ struct PaywallView: View {
                 .padding(.bottom, 36)
             }
             .scrollIndicators(.hidden)
-
-            VStack {
-                HStack {
-                    Spacer()
-                    Button {
-                        handleDismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(GlassTheme.textTertiary)
-                            .frame(width: 32, height: 32)
-                            .background(.ultraThinMaterial, in: Circle())
-                            .overlay(Circle().stroke(Color.white.opacity(0.5), lineWidth: 0.5))
-                    }
-                    .buttonStyle(PremiumButtonStyle(scale: 0.85, opacity: 0.6))
-                    .padding(.trailing, 20)
-                    .padding(.top, 14)
-                }
-                Spacer()
-            }
         }
+        .interactiveDismissDisabled(!allowDismiss)
         .onAppear {
             withAnimation(.spring(response: 0.7, dampingFraction: 0.8)) {
                 appeared = true
             }
         }
-    }
-
-    private func handleDismiss() {
-        dismiss()
     }
 
     private var heroSection: some View {
@@ -273,6 +258,7 @@ struct PaywallView: View {
         VStack(spacing: 10) {
             Button {
                 store.setSubscriptionActive(true)
+                onSubscribe?()
                 dismiss()
             } label: {
                 Text(trialEnabled ? "Start 3-Day Free Trial" : "Subscribe Now")
@@ -300,6 +286,7 @@ struct PaywallView: View {
         HStack(spacing: 14) {
             Button("Restore Purchases") {
                 store.setSubscriptionActive(true)
+                onSubscribe?()
                 dismiss()
             }
             .buttonStyle(PremiumButtonStyle(scale: 0.95, opacity: 0.7))

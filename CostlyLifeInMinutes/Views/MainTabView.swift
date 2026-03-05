@@ -5,6 +5,7 @@ struct MainTabView: View {
     let healthKit: HealthKitService
     @State private var selectedTab: Int = 0
     @State private var showLogSheet: Bool = false
+    @State private var showPaywall: Bool = false
     @State private var previousTab: Int = 0
 
     private var costlyAge: Double {
@@ -57,6 +58,9 @@ struct MainTabView: View {
         .fullScreenCover(isPresented: $showLogSheet) {
             LogActivityView(store: store, costlyAge: costlyAge)
         }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(store: store, allowDismiss: true)
+        }
     }
 
     private var plusButton: some View {
@@ -65,7 +69,11 @@ struct MainTabView: View {
             HStack {
                 Spacer()
                 Button {
-                    showLogSheet = true
+                    if store.profile.canScan {
+                        showLogSheet = true
+                    } else {
+                        showPaywall = true
+                    }
                 } label: {
                     Image(systemName: "plus")
                         .font(.system(size: 20, weight: .semibold))

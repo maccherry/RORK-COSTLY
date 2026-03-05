@@ -56,6 +56,11 @@ class DataStore {
         saveProfile()
     }
 
+    func useFreeScan() {
+        profile.freeScansUsed += 1
+        saveProfile()
+    }
+
     func connectWallet() {
         profile.walletConnected = true
         saveProfile()

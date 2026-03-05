@@ -8,6 +8,7 @@ nonisolated struct UserProfile: Codable, Sendable {
     var hasActiveSubscription: Bool
     var okxRedeemed: Bool
     var walletConnected: Bool
+    var freeScansUsed: Int
 
     init(
         name: String = "",
@@ -16,7 +17,8 @@ nonisolated struct UserProfile: Codable, Sendable {
         hasCompletedOnboarding: Bool = false,
         hasActiveSubscription: Bool = false,
         okxRedeemed: Bool = false,
-        walletConnected: Bool = false
+        walletConnected: Bool = false,
+        freeScansUsed: Int = 0
     ) {
         self.name = name
         self.birthDate = birthDate
@@ -25,6 +27,15 @@ nonisolated struct UserProfile: Codable, Sendable {
         self.hasActiveSubscription = hasActiveSubscription
         self.okxRedeemed = okxRedeemed
         self.walletConnected = walletConnected
+        self.freeScansUsed = freeScansUsed
+    }
+
+    var hasFreeScanAvailable: Bool {
+        freeScansUsed < 1
+    }
+
+    var canScan: Bool {
+        hasActiveSubscription || hasFreeScanAvailable
     }
 
     var estimatedLifeMinutesRemaining: Int {

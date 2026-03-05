@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var healthKit = HealthKitService()
     @State private var showSplash: Bool = true
     @State private var showOnboarding: Bool = false
+    @State private var showPaywall: Bool = false
 
     var body: some View {
         ZStack {
@@ -16,6 +17,8 @@ struct ContentView: View {
                         showSplash = false
                         if !store.profile.hasCompletedOnboarding {
                             showOnboarding = true
+                        } else if !store.profile.hasActiveSubscription {
+                            showPaywall = true
                         }
                     }
                 }
@@ -44,5 +47,10 @@ struct ContentView: View {
         }
         .preferredColorScheme(.light)
         .environment(healthKit)
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(store: store, allowDismiss: false, onSubscribe: {
+                showPaywall = false
+            })
+        }
     }
 }

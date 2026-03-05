@@ -53,12 +53,10 @@ struct OnboardingView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showPaywall, onDismiss: {
-            if store.profile.hasCompletedOnboarding {
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(store: store, allowDismiss: false, onSubscribe: {
                 onComplete()
-            }
-        }) {
-            PaywallView(store: store)
+            })
         }
         .onChange(of: currentPage) { _, newPage in
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {

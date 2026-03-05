@@ -12,6 +12,7 @@ struct LogActivityView: View {
     @State private var shutterScale: CGFloat = 1.0
     @State private var showShareSheet: Bool = false
     @State private var shareImage: UIImage?
+    @State private var showPaywall: Bool = false
     let store: DataStore
     var costlyAge: Double = 0
 
@@ -73,6 +74,9 @@ struct LogActivityView: View {
             }
         }
         .animation(.spring(response: 0.45, dampingFraction: 0.8), value: showConfirmation)
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView(store: store, allowDismiss: true)
+        }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) { appeared = true }
         }
@@ -164,6 +168,9 @@ struct LogActivityView: View {
                    let activity = ActivityDatabase.activity(for: randomId) {
                     scannedActivity = activity
                     showConfirmation = true
+                    if !store.profile.hasActiveSubscription {
+                        store.useFreeScan()
+                    }
                 }
             } label: {
                 ZStack {
@@ -201,11 +208,18 @@ struct LogActivityView: View {
                         VStack(spacing: 0) {
                             ForEach(Array(group.activities.enumerated()), id: \.element.id) { index, activity in
                                 Button {
-                                    store.logActivity(activity)
-                                    loggedActivityName = activity.name
-                                    Task {
-                                        try? await Task.sleep(for: .seconds(0.6))
-                                        dismiss()
+                                    if store.profile.canScan {
+                                        if !store.profile.hasActiveSubscription {
+                                            store.useFreeScan()
+                                        }
+                                        store.logActivity(activity)
+                                        loggedActivityName = activity.name
+                                        Task {
+                                            try? await Task.sleep(for: .seconds(0.6))
+                                            dismiss()
+                                        }
+                                    } else {
+                                        showPaywall = true
                                     }
                                 } label: {
                                     activityRow(activity)
