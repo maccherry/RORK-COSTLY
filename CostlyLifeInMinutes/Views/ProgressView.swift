@@ -5,9 +5,16 @@ struct LifeProgressView: View {
     let healthKit: HealthKitService
     @State private var appeared: Bool = false
     @State private var animateProgress: Bool = false
+    @State private var selectedPeriod: TimePeriod = .week
     @State private var showShareSheet: Bool = false
     @State private var shareImage: UIImage?
-    @State private var ringPhase: CGFloat = 0
+
+    private enum TimePeriod: String, CaseIterable {
+        case week = "7 Days"
+        case month = "30 Days"
+        case quarter = "90 Days"
+        case all = "All time"
+    }
 
     private var totalGained: Int { store.totalMinutesGained }
     private var totalLost: Int { abs(store.totalMinutesLost) }
@@ -44,6 +51,45 @@ struct LifeProgressView: View {
         return count
     }
 
+    private var periodEntries: [LogEntry] {
+        let calendar = Calendar.current
+        switch selectedPeriod {
+        case .week:
+            let start = calendar.date(byAdding: .day, value: -7, to: .now) ?? .now
+            return store.entries.filter { $0.timestamp >= start }
+        case .month:
+            let start = calendar.date(byAdding: .day, value: -30, to: .now) ?? .now
+            return store.entries.filter { $0.timestamp >= start }
+        case .quarter:
+            let start = calendar.date(byAdding: .day, value: -90, to: .now) ?? .now
+            return store.entries.filter { $0.timestamp >= start }
+        case .all:
+            return store.entries
+        }
+    }
+
+    private var periodNet: Int {
+        periodEntries.reduce(0) { $0 + $1.minutesDelta }
+    }
+
+    private var periodGained: Int {
+        periodEntries.filter { $0.minutesDelta > 0 }.reduce(0) { $0 + $1.minutesDelta }
+    }
+
+    private var periodLost: Int {
+        abs(periodEntries.filter { $0.minutesDelta < 0 }.reduce(0) { $0 + $1.minutesDelta })
+    }
+
+    private var periodLogged: Int {
+        periodEntries.count
+    }
+
+    private var progressFraction: Double {
+        let total = Double(periodGained + periodLost)
+        guard total > 0 else { return 0.5 }
+        return Double(periodGained) / total
+    }
+
     private var weeklyData: [(day: String, net: Int)] {
         let calendar = Calendar.current
         let today = Date.now
@@ -59,37 +105,31 @@ struct LifeProgressView: View {
         }
     }
 
-    private var progressFraction: Double {
-        let total = Double(totalGained + totalLost)
-        guard total > 0 else { return 0.5 }
-        return Double(totalGained) / total
-    }
-
     var body: some View {
         ZStack {
             GlassTheme.bgPrimary.ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 20) {
                     header
                         .padding(.top, 8)
                         .premiumStagger(appeared: appeared, index: 0)
 
-                    heroRing
+                    summaryCards
                         .premiumStagger(appeared: appeared, index: 1)
 
-                    todayBalance
+                    periodPicker
                         .premiumStagger(appeared: appeared, index: 2)
 
+                    progressRing
+                        .premiumStagger(appeared: appeared, index: 3)
+
                     if healthKit.isAuthorized {
-                        healthMetrics
-                            .premiumStagger(appeared: appeared, index: 3)
+                        healthDashboard
+                            .premiumStagger(appeared: appeared, index: 4)
                     }
 
-                    weeklyActivity
-                        .premiumStagger(appeared: appeared, index: 4)
-
-                    lifeStats
+                    weeklyChart
                         .premiumStagger(appeared: appeared, index: 5)
 
                     milestones
@@ -114,22 +154,17 @@ struct LifeProgressView: View {
 
     private var header: some View {
         HStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Progress")
-                    .font(.satoshi(.bold, size: 28))
-                    .foregroundStyle(GlassTheme.textPrimary)
-                Text(store.profile.name.isEmpty ? "Your journey" : "\(store.profile.name)'s journey")
-                    .font(.satoshi(.regular, size: 13))
-                    .foregroundStyle(GlassTheme.textTertiary)
-            }
+            Text("Progress")
+                .font(.satoshi(.bold, size: 28))
+                .foregroundStyle(GlassTheme.textPrimary)
             Spacer()
             if streakDays > 0 {
                 HStack(spacing: 5) {
                     Image(systemName: "flame.fill")
                         .font(.system(size: 10))
                         .foregroundStyle(Color(red: 1.0, green: 0.55, blue: 0.2))
-                    Text("\(streakDays)")
-                        .font(.satoshi(.bold, size: 13))
+                    Text("\(streakDays)d streak")
+                        .font(.satoshi(.bold, size: 12))
                         .foregroundStyle(GlassTheme.textPrimary)
                 }
                 .padding(.horizontal, 10)
@@ -141,283 +176,325 @@ struct LifeProgressView: View {
         .padding(.horizontal, 4)
     }
 
-    private var heroRing: some View {
-        let ringSize: CGFloat = 200
+    private var summaryCards: some View {
+        HStack(spacing: 12) {
+            summaryRingCard(
+                icon: "scalemass",
+                ringProgress: min(Double(periodLogged) / max(Double(periodLogged), 10.0), 1.0),
+                ringColor: GlassTheme.textPrimary,
+                title: "Net Minutes",
+                value: formatNet(periodNet),
+                valueColor: GlassTheme.minuteColor(periodNet)
+            )
 
-        return VStack(spacing: 20) {
+            summaryRingCard(
+                icon: "apple.meditate",
+                ringProgress: progressFraction,
+                ringColor: GlassTheme.accent,
+                title: "Activities",
+                value: "\(periodLogged) logged",
+                valueColor: GlassTheme.textPrimary
+            )
+        }
+    }
+
+    private func summaryRingCard(
+        icon: String,
+        ringProgress: Double,
+        ringColor: Color,
+        title: String,
+        value: String,
+        valueColor: Color
+    ) -> some View {
+        VStack(spacing: 14) {
             ZStack {
                 Circle()
-                    .stroke(GlassTheme.separator.opacity(0.4), lineWidth: 1)
-                    .frame(width: ringSize + 40, height: ringSize + 40)
+                    .stroke(GlassTheme.separator.opacity(0.5), lineWidth: 4)
+                    .frame(width: 64, height: 64)
 
                 Circle()
-                    .stroke(GlassTheme.separator.opacity(0.2), lineWidth: 0.5)
-                    .frame(width: ringSize + 64, height: ringSize + 64)
-
-                Circle()
-                    .trim(from: 0, to: 1)
-                    .stroke(GlassTheme.separator.opacity(0.5), style: StrokeStyle(lineWidth: 6, lineCap: .round))
-                    .frame(width: ringSize, height: ringSize)
+                    .trim(from: 0, to: animateProgress ? ringProgress : 0)
+                    .stroke(ringColor, style: StrokeStyle(lineWidth: 4, lineCap: .round))
+                    .frame(width: 64, height: 64)
                     .rotationEffect(.degrees(-90))
 
-                Circle()
-                    .trim(from: 0, to: animateProgress ? progressFraction : 0)
-                    .stroke(
-                        LinearGradient(
-                            colors: [GlassTheme.accent.opacity(0.4), GlassTheme.accent],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        style: StrokeStyle(lineWidth: 6, lineCap: .round)
-                    )
-                    .frame(width: ringSize, height: ringSize)
-                    .rotationEffect(.degrees(-90))
+                Image(systemName: icon)
+                    .font(.system(size: 20, weight: .light))
+                    .foregroundStyle(GlassTheme.textPrimary)
+            }
 
-                let endAngle = Angle.degrees(-90 + progressFraction * 360)
-                Circle()
-                    .fill(GlassTheme.accent)
-                    .frame(width: 8, height: 8)
-                    .shadow(color: GlassTheme.accent.opacity(0.4), radius: 6)
-                    .offset(
-                        x: cos(endAngle.radians) * (ringSize / 2),
-                        y: sin(endAngle.radians) * (ringSize / 2)
-                    )
-                    .opacity(animateProgress ? 1 : 0)
+            Text(title)
+                .font(.satoshi(.regular, size: 12))
+                .foregroundStyle(GlassTheme.textTertiary)
 
-                VStack(spacing: 6) {
-                    Text(formatNet(netMinutes))
-                        .font(.satoshi(.light, size: 48))
-                        .foregroundStyle(GlassTheme.textPrimary)
-                        .contentTransition(.numericText())
-                        .monospacedDigit()
+            Text(value)
+                .font(.satoshi(.bold, size: 16))
+                .foregroundStyle(valueColor)
+                .monospacedDigit()
+                .contentTransition(.numericText())
+        }
+        .padding(.vertical, 20)
+        .frame(maxWidth: .infinity)
+        .glassCard(cornerRadius: 20)
+    }
 
-                    Text("NET MINUTES")
-                        .font(.satoshi(.medium, size: 9))
+    private var periodPicker: some View {
+        HStack(spacing: 0) {
+            ForEach(TimePeriod.allCases, id: \.self) { period in
+                Button {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        selectedPeriod = period
+                    }
+                } label: {
+                    Text(period.rawValue)
+                        .font(.satoshi(.bold, size: 13))
+                        .foregroundStyle(selectedPeriod == period ? GlassTheme.textPrimary : GlassTheme.textTertiary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(
+                            Group {
+                                if selectedPeriod == period {
+                                    Capsule()
+                                        .fill(.white)
+                                        .shadow(color: Color.black.opacity(0.06), radius: 4, y: 2)
+                                }
+                            }
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(4)
+        .background(GlassTheme.separator.opacity(0.3), in: Capsule())
+        .sensoryFeedback(.selection, trigger: selectedPeriod)
+    }
+
+    private var progressRing: some View {
+        VStack(spacing: 20) {
+            HStack {
+                Text("Balance")
+                    .font(.satoshi(.bold, size: 18))
+                    .foregroundStyle(GlassTheme.textPrimary)
+                Spacer()
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(periodNet >= 0 ? GlassTheme.positive : GlassTheme.negative)
+                        .frame(width: 6, height: 6)
+                    Text("\(Int(progressFraction * 100))% positive")
+                        .font(.satoshi(.medium, size: 12))
                         .foregroundStyle(GlassTheme.textTertiary)
-                        .tracking(3)
                 }
             }
 
-            HStack(spacing: 32) {
-                VStack(spacing: 3) {
-                    Text("+\(totalGained)")
-                        .font(.satoshi(.medium, size: 18))
+            HStack(spacing: 0) {
+                let gainedFraction = CGFloat(periodGained) / max(CGFloat(periodGained + periodLost), 1)
+                let lostFraction = 1.0 - gainedFraction
+
+                if periodGained > 0 {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(GlassTheme.positive.opacity(0.15))
+                        .overlay(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(GlassTheme.positive)
+                                .frame(width: animateProgress ? nil : 0)
+                        }
+                        .frame(height: 8)
+                        .frame(maxWidth: .infinity)
+                        .layoutPriority(Double(gainedFraction))
+                }
+
+                if periodLost > 0 {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(GlassTheme.negative.opacity(animateProgress ? 0.25 : 0))
+                        .frame(height: 8)
+                        .frame(maxWidth: .infinity)
+                        .layoutPriority(Double(lostFraction))
+                        .padding(.leading, 3)
+                }
+            }
+
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("+\(periodGained)")
+                        .font(.satoshi(.bold, size: 20))
                         .foregroundStyle(GlassTheme.positive)
                         .monospacedDigit()
                     Text("gained")
-                        .font(.satoshi(.regular, size: 10))
+                        .font(.satoshi(.regular, size: 11))
                         .foregroundStyle(GlassTheme.textTertiary)
                 }
-
-                Rectangle()
-                    .fill(GlassTheme.separator)
-                    .frame(width: 0.5, height: 28)
-
-                VStack(spacing: 3) {
-                    Text("−\(totalLost)")
-                        .font(.satoshi(.medium, size: 18))
+                Spacer()
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("−\(periodLost)")
+                        .font(.satoshi(.bold, size: 20))
                         .foregroundStyle(GlassTheme.negative)
                         .monospacedDigit()
                     Text("lost")
-                        .font(.satoshi(.regular, size: 10))
+                        .font(.satoshi(.regular, size: 11))
                         .foregroundStyle(GlassTheme.textTertiary)
                 }
             }
+
+            if periodNet != 0 {
+                HStack(spacing: 6) {
+                    Image(systemName: periodNet > 0 ? "arrow.up.right" : "arrow.down.right")
+                        .font(.system(size: 10, weight: .bold))
+                    Text(periodNet > 0
+                         ? "You're trending positive. Keep it up!"
+                         : "Small changes add up. You've got this.")
+                        .font(.satoshi(.medium, size: 12))
+                }
+                .foregroundStyle(periodNet > 0 ? GlassTheme.positive : GlassTheme.textTertiary)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
+                .frame(maxWidth: .infinity)
+                .background(
+                    (periodNet > 0 ? GlassTheme.positive : GlassTheme.textTertiary).opacity(0.06),
+                    in: .rect(cornerRadius: 10)
+                )
+            }
         }
-        .padding(.vertical, 28)
-        .frame(maxWidth: .infinity)
-        .glassCard(cornerRadius: 24)
+        .padding(20)
+        .glassCard(cornerRadius: 20)
     }
 
-    private var todayBalance: some View {
-        VStack(spacing: 14) {
+    private var healthDashboard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Today's Health")
+                .font(.satoshi(.bold, size: 18))
+                .foregroundStyle(GlassTheme.textPrimary)
+                .padding(.horizontal, 4)
+
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                healthTile(
+                    icon: "figure.walk",
+                    value: "\(healthKit.stepCount)",
+                    label: "Steps",
+                    goal: 10000,
+                    current: Double(healthKit.stepCount),
+                    color: GlassTheme.accent
+                )
+                healthTile(
+                    icon: "flame.fill",
+                    value: "\(healthKit.activeMinutes) min",
+                    label: "Active Minutes",
+                    goal: 30,
+                    current: Double(healthKit.activeMinutes),
+                    color: GlassTheme.positive
+                )
+                healthTile(
+                    icon: "bolt.fill",
+                    value: "\(healthKit.caloriesBurned)",
+                    label: "Calories Burned",
+                    goal: 500,
+                    current: Double(healthKit.caloriesBurned),
+                    color: Color(red: 1.0, green: 0.55, blue: 0.2)
+                )
+                healthTile(
+                    icon: "bed.double.fill",
+                    value: healthKit.sleepHours > 0 ? String(format: "%.1f hrs", healthKit.sleepHours) : "—",
+                    label: "Sleep",
+                    goal: 8,
+                    current: healthKit.sleepHours,
+                    color: Color(red: 0.4, green: 0.55, blue: 0.85)
+                )
+            }
+        }
+    }
+
+    private func healthTile(
+        icon: String,
+        value: String,
+        label: String,
+        goal: Double,
+        current: Double,
+        color: Color
+    ) -> some View {
+        let progress = min(current / max(goal, 1), 1.0)
+
+        return VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("TODAY")
-                    .font(.satoshi(.medium, size: 9))
-                    .foregroundStyle(GlassTheme.textTertiary)
-                    .tracking(2)
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(color)
+                    .frame(width: 30, height: 30)
+                    .background(color.opacity(0.1), in: .rect(cornerRadius: 8))
                 Spacer()
-                Text(formatNet(todayNet))
-                    .font(.satoshi(.bold, size: 20))
-                    .foregroundStyle(GlassTheme.minuteColor(todayNet))
-                    .monospacedDigit()
-                    .contentTransition(.numericText())
+                Text("\(Int(progress * 100))%")
+                    .font(.satoshi(.medium, size: 11))
+                    .foregroundStyle(GlassTheme.textTertiary)
             }
 
-            GeometryReader { geometry in
-                let width = geometry.size.width
-                let todayGained = store.todayEntries.filter { $0.minutesDelta > 0 }.reduce(0) { $0 + $1.minutesDelta }
-                let todayLostAbs = abs(store.todayEntries.filter { $0.minutesDelta < 0 }.reduce(0) { $0 + $1.minutesDelta })
-                let healthBonus = max(healthKit.healthMinutesBalance, 0)
-                let effectiveGained = todayGained + healthBonus
-                let total = max(effectiveGained + todayLostAbs, 1)
-                let gainedWidth = CGFloat(effectiveGained) / CGFloat(total) * width
+            VStack(alignment: .leading, spacing: 3) {
+                Text(value)
+                    .font(.satoshi(.bold, size: 20))
+                    .foregroundStyle(GlassTheme.textPrimary)
+                    .monospacedDigit()
 
+                Text(label)
+                    .font(.satoshi(.regular, size: 11))
+                    .foregroundStyle(GlassTheme.textTertiary)
+            }
+
+            GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(GlassTheme.separator.opacity(0.5))
-                        .frame(height: 4)
-
+                        .fill(GlassTheme.separator.opacity(0.4))
                     Capsule()
-                        .fill(GlassTheme.accent.opacity(animateProgress ? 0.7 : 0))
-                        .frame(width: animateProgress ? max(gainedWidth, 4) : 0, height: 4)
+                        .fill(color)
+                        .frame(width: animateProgress ? geo.size.width * progress : 0)
                 }
             }
             .frame(height: 4)
         }
-        .padding(18)
-        .glassCard(cornerRadius: 18)
+        .padding(14)
+        .glassCard(cornerRadius: 16)
     }
 
-    private var healthMetrics: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("HEALTH")
-                .font(.satoshi(.medium, size: 9))
-                .foregroundStyle(GlassTheme.textTertiary)
-                .tracking(2)
-                .padding(.horizontal, 4)
-
-            VStack(spacing: 0) {
-                metricRow(icon: "figure.walk", label: "Steps", value: "\(healthKit.stepCount)")
-                metricDivider
-                metricRow(icon: "flame", label: "Active Minutes", value: "\(healthKit.activeMinutes) min")
-                if healthKit.sleepHours > 0 {
-                    metricDivider
-                    metricRow(icon: "moon.fill", label: "Sleep", value: String(format: "%.1f hrs", healthKit.sleepHours))
-                }
-                if healthKit.heartRate > 0 {
-                    metricDivider
-                    metricRow(icon: "heart.fill", label: "Heart Rate", value: "\(Int(healthKit.heartRate)) bpm")
-                }
-                if healthKit.distanceKm > 0 {
-                    metricDivider
-                    metricRow(icon: "point.bottomleft.forward.to.point.topright.scurvepath", label: "Distance", value: String(format: "%.1f km", healthKit.distanceKm))
-                }
-                if healthKit.caloriesBurned > 0 {
-                    metricDivider
-                    metricRow(icon: "bolt", label: "Calories", value: "\(healthKit.caloriesBurned) kcal")
-                }
-            }
-            .glassCard(cornerRadius: 18)
-        }
-    }
-
-    private func metricRow(icon: String, label: String, value: String) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 13, weight: .light))
-                .foregroundStyle(GlassTheme.accent)
-                .frame(width: 20)
-
-            Text(label)
-                .font(.satoshi(.regular, size: 14))
-                .foregroundStyle(GlassTheme.textSecondary)
-            Spacer()
-            Text(value)
-                .font(.satoshi(.medium, size: 14))
-                .foregroundStyle(GlassTheme.textPrimary)
-                .monospacedDigit()
-        }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 14)
-    }
-
-    private var metricDivider: some View {
-        Rectangle()
-            .fill(GlassTheme.separator.opacity(0.5))
-            .frame(height: 0.5)
-            .padding(.leading, 50)
-    }
-
-    private var weeklyActivity: some View {
+    private var weeklyChart: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("THIS WEEK")
-                    .font(.satoshi(.medium, size: 9))
-                    .foregroundStyle(GlassTheme.textTertiary)
-                    .tracking(2)
+                Text("This Week")
+                    .font(.satoshi(.bold, size: 18))
+                    .foregroundStyle(GlassTheme.textPrimary)
                 Spacer()
                 Text(formatNet(store.weekNetMinutes))
-                    .font(.satoshi(.medium, size: 14))
+                    .font(.satoshi(.bold, size: 14))
                     .foregroundStyle(GlassTheme.minuteColor(store.weekNetMinutes))
                     .monospacedDigit()
             }
 
             HStack(alignment: .bottom, spacing: 6) {
-                ForEach(Array(weeklyData.enumerated()), id: \.offset) { index, data in
+                ForEach(Array(weeklyData.enumerated()), id: \.offset) { _, data in
                     VStack(spacing: 6) {
                         Spacer()
 
                         let maxVal = max(weeklyData.map { abs($0.net) }.max() ?? 1, 1)
-                        let barHeight = max(CGFloat(abs(data.net)) / CGFloat(maxVal) * 50, 3)
+                        let barHeight = max(CGFloat(abs(data.net)) / CGFloat(maxVal) * 56, 4)
                         let isPositive = data.net >= 0
 
-                        RoundedRectangle(cornerRadius: 3)
+                        RoundedRectangle(cornerRadius: 4)
                             .fill(isPositive ? GlassTheme.accent : GlassTheme.separator)
-                            .frame(height: animateProgress ? barHeight : 3)
+                            .frame(height: animateProgress ? barHeight : 4)
 
                         Text(data.day)
-                            .font(.satoshi(.medium, size: 9))
+                            .font(.satoshi(.medium, size: 10))
                             .foregroundStyle(GlassTheme.textTertiary)
                     }
                     .frame(maxWidth: .infinity)
                 }
             }
-            .frame(height: 80)
+            .frame(height: 90)
         }
-        .padding(18)
-        .glassCard(cornerRadius: 18)
-    }
-
-    private var lifeStats: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("LIFETIME")
-                .font(.satoshi(.medium, size: 9))
-                .foregroundStyle(GlassTheme.textTertiary)
-                .tracking(2)
-                .padding(.horizontal, 4)
-
-            VStack(spacing: 0) {
-                statRow(label: "Costly Age", value: String(format: "%.1f", costlyAge))
-                metricDivider
-                statRow(label: "Chronological Age", value: String(format: "%.1f", store.profile.preciseAge))
-                metricDivider
-
-                let days = Double(store.allTimeNetMinutes) / 1440.0
-                statRow(
-                    label: days >= 0 ? "Days Added" : "Days Removed",
-                    value: String(format: "%+.1f", days)
-                )
-                metricDivider
-
-                let remaining = store.profile.estimatedLifeMinutesRemaining
-                statRow(label: "Est. Life Remaining", value: formatLargeMinutes(remaining))
-            }
-            .glassCard(cornerRadius: 18)
-        }
-    }
-
-    private func statRow(label: String, value: String) -> some View {
-        HStack {
-            Text(label)
-                .font(.satoshi(.regular, size: 14))
-                .foregroundStyle(GlassTheme.textSecondary)
-            Spacer()
-            Text(value)
-                .font(.satoshi(.medium, size: 14))
-                .foregroundStyle(GlassTheme.textPrimary)
-                .monospacedDigit()
-        }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 14)
+        .padding(20)
+        .glassCard(cornerRadius: 20)
     }
 
     private var milestones: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("MILESTONES")
-                .font(.satoshi(.medium, size: 9))
-                .foregroundStyle(GlassTheme.textTertiary)
-                .tracking(2)
+            Text("Milestones")
+                .font(.satoshi(.bold, size: 18))
+                .foregroundStyle(GlassTheme.textPrimary)
                 .padding(.horizontal, 4)
 
             VStack(spacing: 0) {
@@ -433,9 +510,16 @@ struct LifeProgressView: View {
     private func milestoneRow(title: String, detail: String, achieved: Bool, isLast: Bool) -> some View {
         VStack(spacing: 0) {
             HStack(spacing: 14) {
-                Circle()
-                    .fill(achieved ? GlassTheme.accent : GlassTheme.separator)
-                    .frame(width: 8, height: 8)
+                ZStack {
+                    Circle()
+                        .fill(achieved ? GlassTheme.accent : GlassTheme.separator.opacity(0.5))
+                        .frame(width: 24, height: 24)
+                    if achieved {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -447,12 +531,6 @@ struct LifeProgressView: View {
                 }
 
                 Spacer()
-
-                if achieved {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(GlassTheme.accent)
-                }
             }
             .padding(.horizontal, 18)
             .padding(.vertical, 14)
@@ -461,7 +539,7 @@ struct LifeProgressView: View {
                 Rectangle()
                     .fill(GlassTheme.separator.opacity(0.5))
                     .frame(height: 0.5)
-                    .padding(.leading, 40)
+                    .padding(.leading, 56)
             }
         }
     }

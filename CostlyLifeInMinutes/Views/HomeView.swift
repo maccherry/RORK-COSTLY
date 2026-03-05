@@ -63,15 +63,9 @@ struct HomeView: View {
                         .padding(.horizontal, 16)
                         .premiumStagger(appeared: appeared, index: 3)
 
-                    if healthKit.isAuthorized {
-                        healthSection
-                            .padding(.horizontal, 16)
-                            .premiumStagger(appeared: appeared, index: 4)
-                    }
-
                     recentSection
                         .padding(.horizontal, 16)
-                        .premiumStagger(appeared: appeared, index: 5)
+                        .premiumStagger(appeared: appeared, index: 4)
 
                     Spacer().frame(height: 90)
                 }
@@ -214,50 +208,6 @@ struct HomeView: View {
                 .font(.satoshi(.regular, size: 10))
                 .foregroundStyle(GlassTheme.textTertiary)
                 .lineLimit(1)
-        }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard(cornerRadius: 16)
-    }
-
-    private var healthSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Wellness Overview")
-                .font(.satoshi(.bold, size: 18))
-                .foregroundStyle(GlassTheme.textPrimary)
-
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
-                healthMetricCard(icon: "figure.walk", value: "\(healthKit.stepCount)", label: "Steps", color: GlassTheme.accent)
-                healthMetricCard(icon: "flame.fill", value: "\(healthKit.activeMinutes)", label: "Activity Min", color: GlassTheme.positive)
-                if healthKit.sleepHours > 0 {
-                    healthMetricCard(icon: "bed.double.fill", value: String(format: "%.1f hrs", healthKit.sleepHours), label: "Sleep", color: Color(red: 0.4, green: 0.55, blue: 0.85))
-                }
-                if healthKit.heartRate > 0 {
-                    healthMetricCard(icon: "heart.fill", value: "\(Int(healthKit.heartRate))", label: "BPM", color: Color(red: 0.9, green: 0.35, blue: 0.4))
-                }
-                healthMetricCard(icon: "point.bottomleft.forward.to.point.topright.scurvepath", value: String(format: "%.1f km", healthKit.distanceKm), label: "Distance", color: GlassTheme.textSecondary)
-                healthMetricCard(icon: "bolt.fill", value: "\(healthKit.caloriesBurned)", label: "Calories", color: Color(red: 1.0, green: 0.55, blue: 0.2))
-            }
-        }
-    }
-
-    private func healthMetricCard(icon: String, value: String, label: String, color: Color) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Image(systemName: icon)
-                .font(.system(size: 20, weight: .light))
-                .foregroundStyle(color)
-                .frame(width: 36, height: 36)
-                .background(color.opacity(0.08))
-                .clipShape(.rect(cornerRadius: 10))
-
-            Text(label)
-                .font(.satoshi(.medium, size: 12))
-                .foregroundStyle(GlassTheme.textTertiary)
-
-            Text(value)
-                .font(.satoshi(.bold, size: 18))
-                .foregroundStyle(GlassTheme.textPrimary)
-                .monospacedDigit()
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
