@@ -8,6 +8,7 @@ struct OnboardingView: View {
     @State private var tickingMinutes: Int = 42_075_360
     @State private var pageAppeared: [Bool] = [false, false, false, false]
     let store: DataStore
+    var onComplete: () -> Void
 
     private let totalPages = 4
 
@@ -52,7 +53,11 @@ struct OnboardingView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showPaywall) {
+        .fullScreenCover(isPresented: $showPaywall, onDismiss: {
+            if store.profile.hasCompletedOnboarding {
+                onComplete()
+            }
+        }) {
             PaywallView(store: store)
         }
         .onChange(of: currentPage) { _, newPage in

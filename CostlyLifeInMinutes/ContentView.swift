@@ -21,19 +21,16 @@ struct ContentView: View {
                 }
                 .transition(.opacity.combined(with: .scale(scale: 1.02)))
             } else if showOnboarding {
-                OnboardingView(store: store)
+                OnboardingView(store: store, onComplete: {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
+                        showOnboarding = false
+                    }
+                    Task { await healthKit.requestAuthorization() }
+                })
                     .transition(.asymmetric(
                         insertion: .opacity.combined(with: .offset(y: 8)),
                         removal: .opacity
                     ))
-                    .onChange(of: store.profile.hasActiveSubscription) { _, isActive in
-                        if isActive {
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.85)) {
-                                showOnboarding = false
-                            }
-                            Task { await healthKit.requestAuthorization() }
-                        }
-                    }
             } else {
                 MainTabView(store: store, healthKit: healthKit)
                     .transition(.asymmetric(
