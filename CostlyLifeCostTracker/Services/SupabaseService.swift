@@ -49,12 +49,22 @@ nonisolated struct SupabaseLogEntry: Codable, Sendable {
     }
 }
 
+nonisolated enum AuthError: Error, Sendable {
+    case invalidEmail
+    case passwordTooShort
+    case signUpFailed(String)
+    case signInFailed(String)
+    case signOutFailed(String)
+}
+
 @Observable
 @MainActor
 class SupabaseService {
     private(set) var isAuthenticated: Bool = false
     private(set) var userId: UUID?
+    private(set) var userEmail: String?
     private(set) var isSyncing: Bool = false
+    private(set) var isLoading: Bool = false
 
     private let client: SupabaseClient
 
@@ -70,6 +80,67 @@ class SupabaseService {
 
     var isConfigured: Bool {
         !Config.EXPO_PUBLIC_SUPABASE_URL.isEmpty && !Config.EXPO_PUBLIC_SUPABASE_ANON_KEY.isEmpty
+    }
+
+    func checkExistingSession() async {
+        guard isConfigured else { return }
+        do {
+            let session = try await client.auth.session
+            userId = session.user.id
+            userEmail = session.user.email
+            isAuthenticated = true
+        } catch {
+            isAuthenticated = false
+        }
+    }
+
+    func signUpWithEmail(email: String, password: String) async throws {
+        guard isConfigured else { return }
+        let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard trimmed.contains("@") && trimmed.contains(".") else {
+            throw AuthError.invalidEmail
+        }
+        guard password.count >= 6 else {
+            throw AuthError.passwordTooShort
+        }
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let response = try await client.auth.signUp(email: trimmed, password: password)
+            userId = response.user.id
+            userEmail = response.user.email
+            if response.session != nil {
+                isAuthenticated = true
+            }
+        } catch {
+            throw AuthError.signUpFailed(error.localizedDescription)
+        }
+    }
+
+    func signInWithEmail(email: String, password: String) async throws {
+        guard isConfigured else { return }
+        let trimmed = email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let session = try await client.auth.signIn(email: trimmed, password: password)
+            userId = session.user.id
+            userEmail = session.user.email
+            isAuthenticated = true
+        } catch {
+            throw AuthError.signInFailed(error.localizedDescription)
+        }
+    }
+
+    func signOut() async throws {
+        do {
+            try await client.auth.signOut()
+            isAuthenticated = false
+            userId = nil
+            userEmail = nil
+        } catch {
+            throw AuthError.signOutFailed(error.localizedDescription)
+        }
     }
 
     func signInAnonymously() async {

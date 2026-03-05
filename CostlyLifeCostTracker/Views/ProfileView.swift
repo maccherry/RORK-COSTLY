@@ -5,6 +5,7 @@ struct ProfileView: View {
     let healthKit: HealthKitService
     @State private var showPaywall: Bool = false
     @State private var appeared: Bool = false
+    @State private var showSignOutAlert: Bool = false
 
     var body: some View {
         ZStack {
@@ -35,6 +36,16 @@ struct ProfileView: View {
         }
         .fullScreenCover(isPresented: $showPaywall) {
             PaywallView(store: store)
+        }
+        .alert("Sign Out", isPresented: $showSignOutAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Sign Out", role: .destructive) {
+                Task {
+                    try? await store.supabase.signOut()
+                }
+            }
+        } message: {
+            Text("Are you sure you want to sign out?")
         }
         .onAppear {
             withAnimation(.spring(response: 0.7, dampingFraction: 0.8)) { appeared = true }
@@ -81,12 +92,38 @@ struct ProfileView: View {
             sectionHeader("ACCOUNT")
 
             VStack(spacing: 0) {
+                if let email = store.supabase.userEmail {
+                    HStack(spacing: 10) {
+                        Image(systemName: "envelope")
+                            .font(.system(size: 13))
+                            .foregroundStyle(GlassTheme.accent)
+                            .frame(width: 24)
+
+                        Text(email)
+                            .font(.satoshi(.regular, size: 14))
+                            .foregroundStyle(GlassTheme.textPrimary)
+                            .lineLimit(1)
+
+                        Spacer()
+
+                        Text("Signed In")
+                            .font(.satoshi(.regular, size: 12))
+                            .foregroundStyle(GlassTheme.positive)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 13)
+                    divider
+                }
                 settingsRow(icon: "crown", label: "Subscription", detail: store.profile.hasActiveSubscription ? "Active" : "Free") {
                     showPaywall = true
                 }
                 divider
                 settingsRow(icon: "arrow.clockwise", label: "Restore Purchases", detail: nil) {
                     store.setSubscriptionActive(true)
+                }
+                divider
+                settingsRow(icon: "rectangle.portrait.and.arrow.right", label: "Sign Out", detail: nil) {
+                    showSignOutAlert = true
                 }
             }
             .glassCard(cornerRadius: 14)
