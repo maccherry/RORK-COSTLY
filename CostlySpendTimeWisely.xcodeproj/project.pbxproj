@@ -117,9 +117,9 @@
 			productReference = 105FC57A2E9EAD3100EA8BCF /* CostlySpendTimeWisely.app */;
 			productType = "com.apple.product-type.application";
 		};
-		105FC5882E9EAD3200EA8BCF /* CostlySpendTimeWisely */ = {
+		105FC5882E9EAD3200EA8BCF /* CostlySpendTimeWiselyTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 105FC5A02E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */;
+			buildConfigurationList = 105FC5A02E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWiselyTests" */;
 			buildPhases = (
 				105FC5852E9EAD3200EA8BCF /* Sources */,
 				105FC5862E9EAD3200EA8BCF /* Frameworks */,
@@ -133,16 +133,16 @@
 			fileSystemSynchronizedGroups = (
 				105FC58C2E9EAD3200EA8BCF /* CostlyLifeInMinutesTests */,
 			);
-			name = CostlySpendTimeWisely;
+			name = CostlySpendTimeWiselyTests;
 			packageProductDependencies = (
 			);
-			productName = CostlySpendTimeWisely;
+			productName = CostlySpendTimeWiselyTests;
 			productReference = 105FC5892E9EAD3200EA8BCF /* CostlySpendTimeWiselyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		105FC5922E9EAD3200EA8BCF /* CostlySpendTimeWisely */ = {
+		105FC5922E9EAD3200EA8BCF /* CostlySpendTimeWiselyUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 105FC5A32E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */;
+			buildConfigurationList = 105FC5A32E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWiselyUITests" */;
 			buildPhases = (
 				105FC58F2E9EAD3200EA8BCF /* Sources */,
 				105FC5902E9EAD3200EA8BCF /* Frameworks */,
@@ -156,10 +156,10 @@
 			fileSystemSynchronizedGroups = (
 				105FC5962E9EAD3200EA8BCF /* CostlyLifeInMinutesUITests */,
 			);
-			name = CostlySpendTimeWisely;
+			name = CostlySpendTimeWiselyUITests;
 			packageProductDependencies = (
 			);
-			productName = CostlySpendTimeWisely;
+			productName = CostlySpendTimeWiselyUITests;
 			productReference = 105FC5932E9EAD3200EA8BCF /* CostlySpendTimeWiselyUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
@@ -201,8 +201,8 @@
 			projectRoot = "";
 			targets = (
 				105FC5792E9EAD3100EA8BCF /* CostlySpendTimeWisely */,
-				105FC5882E9EAD3200EA8BCF /* CostlySpendTimeWisely */,
-				105FC5922E9EAD3200EA8BCF /* CostlySpendTimeWisely */,
+				105FC5882E9EAD3200EA8BCF /* CostlySpendTimeWiselyTests */,
+				105FC5922E9EAD3200EA8BCF /* CostlySpendTimeWiselyUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -399,7 +399,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				CODE_SIGN_ENTITLEMENTS = CostlyLifeInMinutes/CostlyLifeInMinutes.entitlements;
+				CODE_SIGN_ENTITLEMENTS = CostlySpendTimeWisely/CostlyLifeInMinutes.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Costly reads your health data to calculate minutes gained or lost from your daily activities.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Costly uses the camera to scan food and drinks to log their time impact.";
@@ -436,7 +436,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				CODE_SIGN_ENTITLEMENTS = CostlyLifeInMinutes/CostlyLifeInMinutes.entitlements;
+				CODE_SIGN_ENTITLEMENTS = CostlySpendTimeWisely/CostlyLifeInMinutes.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Costly reads your health data to calculate minutes gained or lost from your daily activities.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Costly uses the camera to scan food and drinks to log their time impact.";
@@ -482,7 +482,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CostlyLifeInMinutes.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CostlyLifeInMinutes";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CostlySpendTimeWisely.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CostlySpendTimeWisely";
 			};
 			name = Debug;
 		};
@@ -504,7 +504,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CostlyLifeInMinutes.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CostlyLifeInMinutes";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CostlySpendTimeWisely.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CostlySpendTimeWisely";
 			};
 			name = Release;
 		};
@@ -524,7 +524,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = CostlyLifeInMinutes;
+				TEST_TARGET_NAME = CostlySpendTimeWisely;
 			};
 			name = Debug;
 		};
@@ -544,7 +544,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = CostlyLifeInMinutes;
+				TEST_TARGET_NAME = CostlySpendTimeWisely;
 			};
 			name = Release;
 		};
@@ -569,7 +569,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		105FC5A02E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */ = {
+		105FC5A02E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWiselyTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				105FC5A12E9EAD3200EA8BCF /* Debug */,
@@ -578,7 +578,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		105FC5A32E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */ = {
+		105FC5A32E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWiselyUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				105FC5A42E9EAD3200EA8BCF /* Debug */,
