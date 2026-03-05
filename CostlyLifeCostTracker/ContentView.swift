@@ -42,6 +42,7 @@ struct ContentView: View {
                     ))
                     .task {
                         await healthKit.requestAuthorization()
+                        await store.initializeSupabase()
                     }
             }
         }

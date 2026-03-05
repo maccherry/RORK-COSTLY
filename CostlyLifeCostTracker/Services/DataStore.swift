@@ -6,6 +6,7 @@ import SwiftUI
 class DataStore {
     var profile: UserProfile
     var entries: [LogEntry]
+    let supabase = SupabaseService()
 
     private let profileKey = "costly_user_profile"
     private let entriesKey = "costly_log_entries"
@@ -26,15 +27,48 @@ class DataStore {
         }
     }
 
+    func initializeSupabase() async {
+        guard supabase.isConfigured else { return }
+        await supabase.signInAnonymously()
+        guard supabase.isAuthenticated else { return }
+
+        if let remoteProfile = await supabase.fetchProfile() {
+            if remoteProfile.hasCompletedOnboarding && !profile.hasCompletedOnboarding {
+                profile = remoteProfile
+                saveProfileLocal()
+            }
+        }
+
+        let remoteEntries = await supabase.fetchLogEntries()
+        if !remoteEntries.isEmpty {
+            let localIds = Set(entries.map { $0.id })
+            let newEntries = remoteEntries.filter { !localIds.contains($0.id) }
+            if !newEntries.isEmpty {
+                entries.append(contentsOf: newEntries)
+                entries.sort { $0.timestamp > $1.timestamp }
+                saveEntriesLocal()
+            }
+        }
+
+        if profile.hasCompletedOnboarding {
+            await supabase.syncProfile(profile)
+        }
+        for entry in entries {
+            await supabase.syncLogEntry(entry)
+        }
+    }
+
     func logActivity(_ activity: Activity) {
         let entry = LogEntry(activity: activity)
         entries.insert(entry, at: 0)
         saveEntries()
+        Task { await supabase.syncLogEntry(entry) }
     }
 
     func deleteEntry(_ entry: LogEntry) {
         entries.removeAll { $0.id == entry.id }
         saveEntries()
+        Task { await supabase.deleteLogEntry(entry.id) }
     }
 
     func completeOnboarding(name: String, birthDate: Date) {
@@ -102,12 +136,21 @@ class DataStore {
     }
 
     private func saveProfile() {
+        saveProfileLocal()
+        Task { await supabase.syncProfile(profile) }
+    }
+
+    private func saveEntries() {
+        saveEntriesLocal()
+    }
+
+    private func saveProfileLocal() {
         if let data = try? JSONEncoder().encode(profile) {
             UserDefaults.standard.set(data, forKey: profileKey)
         }
     }
 
-    private func saveEntries() {
+    private func saveEntriesLocal() {
         if let data = try? JSONEncoder().encode(entries) {
             UserDefaults.standard.set(data, forKey: entriesKey)
         }

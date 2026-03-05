@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		XX50D61ED0BAE05FA2F8E9XX /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = XX1C9FF110ABBCE8BF456CXX /* Supabase */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		105FC58A2E9EAD3200EA8BCF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				XX50D61ED0BAE05FA2F8E9XX /* Supabase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = CostlyLifeCostTracker;
 			packageProductDependencies = (
+				XX1C9FF110ABBCE8BF456CXX /* Supabase */,
 			);
 			productName = CostlyLifeCostTracker;
 			productReference = 105FC57A2E9EAD3100EA8BCF /* CostlyLifeCostTracker.app */;
@@ -203,6 +209,9 @@
 				105FC5792E9EAD3100EA8BCF /* CostlyLifeCostTracker */,
 				105FC5882E9EAD3200EA8BCF /* CostlyLifeCostTracker */,
 				105FC5922E9EAD3200EA8BCF /* CostlyLifeCostTracker */,
+			);
+			packageReferences = (
+				XX20EB7F6EA71E9F2E096CXX /* XCRemoteSwiftPackageReference "supabase-swift" */,
 			);
 		};
 /* End PBXProject section */
@@ -588,6 +597,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		XX20EB7F6EA71E9F2E096CXX /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		XX1C9FF110ABBCE8BF456CXX /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = XX20EB7F6EA71E9F2E096CXX /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 105FC5722E9EAD3100EA8BCF /* Project object */;
 }

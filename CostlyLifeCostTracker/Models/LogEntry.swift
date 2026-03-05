@@ -17,6 +17,15 @@ nonisolated struct LogEntry: Identifiable, Codable, Sendable {
         self.timestamp = timestamp
     }
 
+    init(id: UUID, activityId: String, activityName: String, activityIcon: String, minutesDelta: Int, timestamp: Date) {
+        self.id = id
+        self.activityId = activityId
+        self.activityName = activityName
+        self.activityIcon = activityIcon
+        self.minutesDelta = minutesDelta
+        self.timestamp = timestamp
+    }
+
     var isPositive: Bool { minutesDelta >= 0 }
     var formattedDelta: String {
         minutesDelta >= 0 ? "+\(minutesDelta)" : "\(minutesDelta)"
