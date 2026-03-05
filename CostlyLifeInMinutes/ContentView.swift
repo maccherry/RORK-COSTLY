@@ -8,7 +8,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            GlassTheme.bgPrimary.ignoresSafeArea()
 
             if showSplash {
                 SplashView {
@@ -45,7 +45,7 @@ struct ContentView: View {
                     }
             }
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
         .environment(healthKit)
     }
 }

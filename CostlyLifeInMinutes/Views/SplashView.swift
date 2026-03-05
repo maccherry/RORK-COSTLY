@@ -10,12 +10,12 @@ struct SplashView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.white.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Text("Costly")
                     .font(.satoshi(.light, size: 52))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(GlassTheme.textPrimary)
                     .opacity(showTitle ? 1 : 0)
                     .scaleEffect(showTitle ? 1 : titleScale)
                     .blur(radius: showTitle ? 0 : 6)
@@ -23,7 +23,7 @@ struct SplashView: View {
                 Rectangle()
                     .fill(
                         LinearGradient(
-                            colors: [Color.white.opacity(0), Color.white.opacity(0.2), Color.white.opacity(0)],
+                            colors: [GlassTheme.textPrimary.opacity(0), GlassTheme.textPrimary.opacity(0.15), GlassTheme.textPrimary.opacity(0)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
@@ -33,7 +33,7 @@ struct SplashView: View {
 
                 Text("The cost of living.")
                     .font(.satoshi(.regular, size: 15))
-                    .foregroundStyle(.white.opacity(0.35))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .tracking(1)
                     .opacity(showTagline ? 1 : 0)
                     .offset(y: showTagline ? 0 : 10)

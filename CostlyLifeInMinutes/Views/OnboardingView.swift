@@ -13,7 +13,7 @@ struct OnboardingView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.white.ignoresSafeArea()
 
             TabView(selection: $currentPage) {
                 hookPage.tag(0)
@@ -38,10 +38,10 @@ struct OnboardingView: View {
                         } label: {
                             Text("Continue")
                                 .font(.satoshi(.bold, size: 17))
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 54)
-                                .background(.white)
+                                .background(GlassTheme.textPrimary)
                                 .clipShape(.rect(cornerRadius: 27))
                         }
                         .buttonStyle(PremiumCTAButtonStyle())
@@ -71,7 +71,7 @@ struct OnboardingView: View {
         HStack(spacing: 5) {
             ForEach(0..<totalPages, id: \.self) { index in
                 Capsule()
-                    .fill(index <= currentPage ? Color.white.opacity(0.8) : Color.white.opacity(0.1))
+                    .fill(index <= currentPage ? GlassTheme.textPrimary : GlassTheme.separator)
                     .frame(width: index == currentPage ? 24 : 5, height: 5)
                     .animation(.spring(response: 0.35, dampingFraction: 0.7), value: currentPage)
             }
@@ -86,25 +86,25 @@ struct OnboardingView: View {
                 VStack(spacing: 6) {
                     Text("\(tickingMinutes)")
                         .font(.satoshi(.light, size: 48))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(GlassTheme.textPrimary)
                         .monospacedDigit()
                         .contentTransition(.numericText(value: Double(tickingMinutes)))
                     Text("minutes remaining")
                         .font(.satoshi(.medium, size: 13))
-                        .foregroundStyle(.white.opacity(0.25))
+                        .foregroundStyle(GlassTheme.textTertiary)
                         .tracking(0.5)
                 }
 
                 VStack(spacing: 10) {
                     Text("Every choice\nhas a price.")
                         .font(.satoshi(.light, size: 32))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(GlassTheme.textPrimary)
                         .multilineTextAlignment(.center)
                         .lineSpacing(2)
 
                     Text("We measure it in minutes.")
                         .font(.satoshi(.regular, size: 15))
-                        .foregroundStyle(.white.opacity(0.35))
+                        .foregroundStyle(GlassTheme.textTertiary)
                 }
             }
             .opacity(pageAppeared[0] ? 1 : 0)
@@ -125,13 +125,13 @@ struct OnboardingView: View {
                 VStack(spacing: 10) {
                     Text("Your habits\nshape your time.")
                         .font(.satoshi(.light, size: 32))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(GlassTheme.textPrimary)
                         .multilineTextAlignment(.center)
                         .lineSpacing(2)
 
                     Text("Every habit adds or subtracts\nfrom your life.")
                         .font(.satoshi(.regular, size: 14))
-                        .foregroundStyle(.white.opacity(0.35))
+                        .foregroundStyle(GlassTheme.textTertiary)
                         .multilineTextAlignment(.center)
                         .lineSpacing(2)
                 }
@@ -154,7 +154,7 @@ struct OnboardingView: View {
         VStack(spacing: 14) {
             Image(systemName: icon)
                 .font(.system(size: 26, weight: .light))
-                .foregroundStyle(.white.opacity(0.3))
+                .foregroundStyle(GlassTheme.textTertiary)
 
             Text(delta)
                 .font(.satoshi(.light, size: 36))
@@ -162,11 +162,11 @@ struct OnboardingView: View {
 
             Text(label)
                 .font(.satoshi(.medium, size: 12))
-                .foregroundStyle(.white.opacity(0.35))
+                .foregroundStyle(GlassTheme.textTertiary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 28)
-        .premiumCardStyle()
+        .glassCard()
     }
 
     private var proofPage: some View {
@@ -177,13 +177,13 @@ struct OnboardingView: View {
                 VStack(spacing: 10) {
                     Text("See what your\nhabits really cost.")
                         .font(.satoshi(.light, size: 32))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(GlassTheme.textPrimary)
                         .multilineTextAlignment(.center)
                         .lineSpacing(2)
 
                     Text("Track. Measure. Reveal.")
                         .font(.satoshi(.regular, size: 14))
-                        .foregroundStyle(.white.opacity(0.35))
+                        .foregroundStyle(GlassTheme.textTertiary)
                 }
 
                 VStack(spacing: 0) {
@@ -197,7 +197,7 @@ struct OnboardingView: View {
                     rowDivider
                     exampleRow(icon: "cup.and.saucer", name: "Coffee", delta: -2)
                 }
-                .premiumCardStyle()
+                .glassCard()
             }
             .opacity(pageAppeared.count > 2 && pageAppeared[2] ? 1 : 0)
             .offset(y: pageAppeared.count > 2 && pageAppeared[2] ? 0 : 20)
@@ -217,13 +217,13 @@ struct OnboardingView: View {
                     VStack(spacing: 10) {
                         Text("Let's set up\nyour clock.")
                             .font(.satoshi(.light, size: 32))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(GlassTheme.textPrimary)
                             .multilineTextAlignment(.center)
                             .lineSpacing(2)
 
                         Text("We'll calculate your biological age\nand time remaining.")
                             .font(.satoshi(.regular, size: 14))
-                            .foregroundStyle(.white.opacity(0.35))
+                            .foregroundStyle(GlassTheme.textTertiary)
                             .multilineTextAlignment(.center)
                             .lineSpacing(2)
                     }
@@ -232,30 +232,29 @@ struct OnboardingView: View {
                         VStack(alignment: .leading, spacing: 7) {
                             Text("YOUR NAME")
                                 .font(.satoshi(.bold, size: 9))
-                                .foregroundStyle(.white.opacity(0.2))
+                                .foregroundStyle(GlassTheme.textTertiary)
                                 .tracking(1.5)
 
-                            TextField("", text: $userName, prompt: Text("Enter your name").foregroundStyle(.white.opacity(0.18)))
+                            TextField("", text: $userName, prompt: Text("Enter your name").foregroundStyle(GlassTheme.textTertiary))
                                 .font(.satoshi(.regular, size: 16))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(GlassTheme.textPrimary)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
-                                .premiumCardStyle(cornerRadius: 14)
+                                .glassCard(cornerRadius: 14)
                         }
 
                         VStack(alignment: .leading, spacing: 7) {
                             Text("DATE OF BIRTH")
                                 .font(.satoshi(.bold, size: 9))
-                                .foregroundStyle(.white.opacity(0.2))
+                                .foregroundStyle(GlassTheme.textTertiary)
                                 .tracking(1.5)
 
                             DatePicker("", selection: $birthDate, in: ...Date.now, displayedComponents: .date)
                                 .datePickerStyle(.compact)
                                 .labelsHidden()
-                                .colorScheme(.dark)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 10)
-                                .premiumCardStyle(cornerRadius: 14)
+                                .glassCard(cornerRadius: 14)
                         }
                     }
 
@@ -268,10 +267,10 @@ struct OnboardingView: View {
                     } label: {
                         Text("See My Time")
                             .font(.satoshi(.bold, size: 17))
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 54)
-                            .background(.white)
+                            .background(GlassTheme.textPrimary)
                             .clipShape(.rect(cornerRadius: 27))
                     }
                     .buttonStyle(PremiumCTAButtonStyle())
@@ -292,18 +291,18 @@ struct OnboardingView: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 15, weight: .light))
-                .foregroundStyle(.white.opacity(0.3))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .frame(width: 30)
             Text(name)
                 .font(.satoshi(.regular, size: 14))
-                .foregroundStyle(.white.opacity(0.65))
+                .foregroundStyle(GlassTheme.textPrimary)
             Spacer()
             Text(delta >= 0 ? "+\(delta)" : "\(delta)")
                 .font(.satoshi(.medium, size: 16))
                 .foregroundStyle(delta >= 0 ? GlassTheme.positive : GlassTheme.negative)
             Text("min")
                 .font(.satoshi(.regular, size: 11))
-                .foregroundStyle(.white.opacity(0.2))
+                .foregroundStyle(GlassTheme.textTertiary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 13)
@@ -311,7 +310,7 @@ struct OnboardingView: View {
 
     private var rowDivider: some View {
         Rectangle()
-            .fill(.white.opacity(0.03))
+            .fill(GlassTheme.separator.opacity(0.5))
             .frame(height: 0.5)
             .padding(.leading, 58)
     }

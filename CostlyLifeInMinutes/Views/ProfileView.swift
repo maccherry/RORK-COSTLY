@@ -12,7 +12,7 @@ struct ProfileView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            GlassTheme.bgPrimary.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 20) {
@@ -54,33 +54,33 @@ struct ProfileView: View {
         VStack(spacing: 14) {
             ZStack {
                 Circle()
-                    .fill(Color(white: 0.06))
+                    .fill(
+                        LinearGradient(
+                            colors: [GlassTheme.bgPrimary, Color.white],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
                     .frame(width: 72, height: 72)
+                    .shadow(color: Color.black.opacity(0.06), radius: 12, y: 4)
                     .overlay(
                         Circle()
-                            .stroke(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 0.5
-                            )
+                            .stroke(Color.white.opacity(0.8), lineWidth: 0.5)
                     )
 
                 Text(String(store.profile.name.prefix(1)).uppercased())
                     .font(.satoshi(.light, size: 28))
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(GlassTheme.textSecondary)
             }
 
             VStack(spacing: 4) {
                 Text(store.profile.name)
                     .font(.satoshi(.bold, size: 22))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(GlassTheme.textPrimary)
 
                 Text("Member since \(store.profile.memberSince, format: .dateTime.month(.wide).year())")
                     .font(.satoshi(.regular, size: 12))
-                    .foregroundStyle(.white.opacity(0.2))
+                    .foregroundStyle(GlassTheme.textTertiary)
             }
         }
     }
@@ -90,24 +90,24 @@ struct ProfileView: View {
             VStack(spacing: 6) {
                 Text("CHRONOLOGICAL")
                     .font(.satoshi(.bold, size: 8))
-                    .foregroundStyle(.white.opacity(0.2))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .tracking(1)
                 Text(String(format: "%.1f", store.profile.preciseAge))
                     .font(.satoshi(.light, size: 30))
-                    .foregroundStyle(.white.opacity(0.45))
+                    .foregroundStyle(GlassTheme.textSecondary)
                     .monospacedDigit()
                     .contentTransition(.numericText())
             }
             .frame(maxWidth: .infinity)
 
             Rectangle()
-                .fill(.white.opacity(0.04))
+                .fill(GlassTheme.separator)
                 .frame(width: 0.5, height: 48)
 
             VStack(spacing: 6) {
                 Text("BIOLOGICAL")
                     .font(.satoshi(.bold, size: 8))
-                    .foregroundStyle(.white.opacity(0.2))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .tracking(1)
                 Text(String(format: "%.1f", bioAge))
                     .font(.satoshi(.light, size: 30))
@@ -118,7 +118,7 @@ struct ProfileView: View {
             .frame(maxWidth: .infinity)
         }
         .padding(.vertical, 22)
-        .premiumCardStyle(cornerRadius: 18)
+        .glassCard(cornerRadius: 18)
     }
 
     private var healthCard: some View {
@@ -126,7 +126,7 @@ struct ProfileView: View {
             sectionHeader("HEALTH DATA")
 
             VStack(spacing: 0) {
-                infoRow(icon: "figure.walk", label: "Steps Today", value: "\(healthKit.stepCount)", color: .white.opacity(0.5))
+                infoRow(icon: "figure.walk", label: "Steps Today", value: "\(healthKit.stepCount)", color: GlassTheme.accent)
                 divider
                 infoRow(icon: "flame.fill", label: "Active Minutes", value: "\(healthKit.activeMinutes) min", color: GlassTheme.positive)
                 if healthKit.sleepHours > 0 {
@@ -135,12 +135,12 @@ struct ProfileView: View {
                 }
                 if healthKit.heartRate > 0 {
                     divider
-                    infoRow(icon: "heart.fill", label: "Heart Rate", value: "\(Int(healthKit.heartRate)) bpm", color: .white.opacity(0.5))
+                    infoRow(icon: "heart.fill", label: "Heart Rate", value: "\(Int(healthKit.heartRate)) bpm", color: Color(red: 0.9, green: 0.35, blue: 0.4))
                 }
                 divider
                 infoRow(icon: "plus.circle.fill", label: "Health Bonus", value: GlassTheme.formatMinutes(healthKit.healthMinutesBalance) + " min", color: GlassTheme.minuteColor(healthKit.healthMinutesBalance))
             }
-            .premiumCardStyle(cornerRadius: 14)
+            .glassCard(cornerRadius: 14)
         }
     }
 
@@ -166,9 +166,9 @@ struct ProfileView: View {
                 divider
 
                 let remaining = store.profile.estimatedLifeMinutesRemaining
-                infoRow(icon: "hourglass", label: "Est. Life Remaining", value: formatLargeMinutes(remaining), color: .white.opacity(0.4))
+                infoRow(icon: "hourglass", label: "Est. Life Remaining", value: formatLargeMinutes(remaining), color: GlassTheme.textSecondary)
             }
-            .premiumCardStyle(cornerRadius: 14)
+            .glassCard(cornerRadius: 14)
         }
     }
 
@@ -193,7 +193,7 @@ struct ProfileView: View {
                 divider
                 settingsRow(icon: "hand.raised", label: "Privacy Policy", detail: nil) { }
             }
-            .premiumCardStyle(cornerRadius: 14)
+            .glassCard(cornerRadius: 14)
         }
     }
 
@@ -202,24 +202,24 @@ struct ProfileView: View {
             HStack(spacing: 10) {
                 Image(systemName: icon)
                     .font(.system(size: 13))
-                    .foregroundStyle(.white.opacity(0.35))
+                    .foregroundStyle(GlassTheme.accent)
                     .frame(width: 24)
 
                 Text(label)
                     .font(.satoshi(.regular, size: 14))
-                    .foregroundStyle(.white.opacity(0.65))
+                    .foregroundStyle(GlassTheme.textPrimary)
 
                 Spacer()
 
                 if let detail {
                     Text(detail)
                         .font(.satoshi(.regular, size: 12))
-                        .foregroundStyle(.white.opacity(0.2))
+                        .foregroundStyle(GlassTheme.textTertiary)
                 }
 
                 Image(systemName: "chevron.right")
                     .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.12))
+                    .foregroundStyle(GlassTheme.textTertiary.opacity(0.5))
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 13)
@@ -238,7 +238,7 @@ struct ProfileView: View {
 
             Text(label)
                 .font(.satoshi(.regular, size: 13))
-                .foregroundStyle(.white.opacity(0.4))
+                .foregroundStyle(GlassTheme.textSecondary)
             Spacer()
             Text(value)
                 .font(.satoshi(.medium, size: 14))
@@ -251,7 +251,7 @@ struct ProfileView: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(.white.opacity(0.03))
+            .fill(GlassTheme.separator.opacity(0.5))
             .frame(height: 0.5)
             .padding(.leading, 48)
     }
@@ -259,7 +259,7 @@ struct ProfileView: View {
     private func sectionHeader(_ text: String) -> some View {
         Text(text)
             .font(.satoshi(.bold, size: 9))
-            .foregroundStyle(.white.opacity(0.2))
+            .foregroundStyle(GlassTheme.textTertiary)
             .tracking(1.5)
     }
 
@@ -267,10 +267,10 @@ struct ProfileView: View {
         VStack(spacing: 3) {
             Text("Costly")
                 .font(.satoshi(.light, size: 13))
-                .foregroundStyle(.white.opacity(0.12))
+                .foregroundStyle(GlassTheme.textTertiary.opacity(0.5))
             Text("Version 1.0.0")
                 .font(.satoshi(.regular, size: 10))
-                .foregroundStyle(.white.opacity(0.06))
+                .foregroundStyle(GlassTheme.textTertiary.opacity(0.3))
         }
         .padding(.top, 8)
     }

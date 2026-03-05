@@ -15,7 +15,7 @@ struct PaywallView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.white.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 28) {
@@ -52,10 +52,10 @@ struct PaywallView: View {
                     } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 12, weight: .bold))
-                            .foregroundStyle(.white.opacity(0.35))
+                            .foregroundStyle(GlassTheme.textTertiary)
                             .frame(width: 32, height: 32)
-                            .background(Color.white.opacity(0.05))
-                            .clipShape(Circle())
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(Circle().stroke(Color.white.opacity(0.5), lineWidth: 0.5))
                     }
                     .buttonStyle(PremiumButtonStyle(scale: 0.85, opacity: 0.6))
                     .padding(.trailing, 20)
@@ -63,8 +63,6 @@ struct PaywallView: View {
                 }
                 Spacer()
             }
-
-
         }
         .onAppear {
             withAnimation(.spring(response: 0.7, dampingFraction: 0.8)) {
@@ -81,23 +79,17 @@ struct PaywallView: View {
         VStack(spacing: 18) {
             ZStack {
                 Circle()
-                    .fill(Color(white: 0.06))
+                    .fill(GlassTheme.bgPrimary)
                     .frame(width: 72, height: 72)
+                    .shadow(color: Color.black.opacity(0.04), radius: 12, y: 4)
                     .overlay(
                         Circle()
-                            .stroke(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 0.5
-                            )
+                            .stroke(Color.white.opacity(0.8), lineWidth: 0.5)
                     )
 
                 Image(systemName: "hourglass")
                     .font(.system(size: 30, weight: .ultraLight))
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(GlassTheme.textSecondary)
             }
             .scaleEffect(appeared ? 1 : 0.85)
             .animation(.spring(response: 0.6, dampingFraction: 0.6), value: appeared)
@@ -105,11 +97,11 @@ struct PaywallView: View {
             VStack(spacing: 8) {
                 Text("Unlock Costly")
                     .font(.satoshi(.light, size: 30))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(GlassTheme.textPrimary)
 
                 Text("Track every minute gained and lost.\nSee the true cost of your choices.")
                     .font(.satoshi(.regular, size: 14))
-                    .foregroundStyle(.white.opacity(0.35))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .multilineTextAlignment(.center)
                     .lineSpacing(3)
             }
@@ -142,25 +134,25 @@ struct PaywallView: View {
                 subtitle: "Turn positive habits into real rewards — the only app that pays you in time for living better"
             )
         }
-        .premiumCardStyle(cornerRadius: 18)
+        .glassCard(cornerRadius: 18)
     }
 
     private func featureRow(icon: String, title: String, subtitle: String) -> some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
                 .font(.system(size: 15))
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(GlassTheme.accent)
                 .frame(width: 36, height: 36)
-                .background(Color.white.opacity(0.04))
+                .background(GlassTheme.accent.opacity(0.06))
                 .clipShape(.rect(cornerRadius: 9))
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                     .font(.satoshi(.bold, size: 14))
-                    .foregroundStyle(.white.opacity(0.9))
+                    .foregroundStyle(GlassTheme.textPrimary)
                 Text(subtitle)
                     .font(.satoshi(.regular, size: 12))
-                    .foregroundStyle(.white.opacity(0.35))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .lineSpacing(2)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -173,7 +165,7 @@ struct PaywallView: View {
 
     private var featureDivider: some View {
         Rectangle()
-            .fill(.white.opacity(0.03))
+            .fill(GlassTheme.separator.opacity(0.5))
             .frame(height: 0.5)
             .padding(.leading, 60)
     }
@@ -209,7 +201,7 @@ struct PaywallView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(GlassTheme.positive.opacity(0.7))
+                        .background(GlassTheme.positive)
                         .clipShape(Capsule())
                 } else {
                     Spacer().frame(height: 14)
@@ -217,35 +209,39 @@ struct PaywallView: View {
 
                 Text(plan.rawValue)
                     .font(.satoshi(.medium, size: 11))
-                    .foregroundStyle(.white.opacity(0.45))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .textCase(.uppercase)
                     .tracking(1)
 
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text(price)
                         .font(.satoshi(.bold, size: 22))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(GlassTheme.textPrimary)
                     Text(period)
                         .font(.satoshi(.regular, size: 10))
-                        .foregroundStyle(.white.opacity(0.3))
+                        .foregroundStyle(GlassTheme.textTertiary)
                 }
 
                 Text(subtitle)
                     .font(.satoshi(.regular, size: 10))
-                    .foregroundStyle(.white.opacity(0.2))
+                    .foregroundStyle(GlassTheme.textTertiary)
 
                 Spacer().frame(height: 2)
             }
             .padding(.vertical, 16)
             .frame(maxWidth: .infinity)
-            .background(Color(white: selectedPlan == plan ? 0.09 : 0.04))
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(selectedPlan == plan ? GlassTheme.bgPrimary : .white)
+                    .shadow(color: Color.black.opacity(selectedPlan == plan ? 0.06 : 0.02), radius: 12, y: 4)
+            )
             .clipShape(.rect(cornerRadius: 16))
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(
                         selectedPlan == plan
-                            ? LinearGradient(colors: [Color.white.opacity(0.25), Color.white.opacity(0.08)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                            : LinearGradient(colors: [Color.white.opacity(0.05), Color.white.opacity(0.02)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            ? GlassTheme.textPrimary.opacity(0.3)
+                            : GlassTheme.separator,
                         lineWidth: selectedPlan == plan ? 1.5 : 0.5
                     )
             )
@@ -261,10 +257,10 @@ struct PaywallView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("3-Day Free Trial")
                     .font(.satoshi(.medium, size: 15))
-                    .foregroundStyle(.white.opacity(0.85))
+                    .foregroundStyle(GlassTheme.textPrimary)
                 Text("Subscription starts automatically after trial ends")
                     .font(.satoshi(.regular, size: 11))
-                    .foregroundStyle(.white.opacity(0.25))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .lineLimit(2)
             }
 
@@ -272,11 +268,11 @@ struct PaywallView: View {
 
             Toggle("", isOn: $trialEnabled)
                 .labelsHidden()
-                .tint(.white)
+                .tint(GlassTheme.textPrimary)
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 16)
-        .premiumCardStyle(cornerRadius: 14)
+        .glassCard(cornerRadius: 14)
         .sensoryFeedback(.impact(weight: .light, intensity: 0.2), trigger: trialEnabled)
     }
 
@@ -288,10 +284,10 @@ struct PaywallView: View {
             } label: {
                 Text(trialEnabled ? "Start 3-Day Free Trial" : "Subscribe Now")
                     .font(.satoshi(.bold, size: 17))
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 54)
-                    .background(.white)
+                    .background(GlassTheme.textPrimary)
                     .clipShape(.rect(cornerRadius: 27))
             }
             .buttonStyle(PremiumCTAButtonStyle())
@@ -302,7 +298,7 @@ struct PaywallView: View {
                  : "\(selectedPlan == .yearly ? "$39.99/year" : "$9.99/month"). Cancel anytime."
             )
                 .font(.satoshi(.regular, size: 11))
-                .foregroundStyle(.white.opacity(0.2))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .multilineTextAlignment(.center)
         }
     }
@@ -314,16 +310,14 @@ struct PaywallView: View {
                 dismiss()
             }
             .buttonStyle(PremiumButtonStyle(scale: 0.95, opacity: 0.7))
-            Text("·").foregroundStyle(.white.opacity(0.12))
+            Text("·").foregroundStyle(GlassTheme.separator)
             Button("Terms") { }
                 .buttonStyle(PremiumButtonStyle(scale: 0.95, opacity: 0.7))
-            Text("·").foregroundStyle(.white.opacity(0.12))
+            Text("·").foregroundStyle(GlassTheme.separator)
             Button("Privacy") { }
                 .buttonStyle(PremiumButtonStyle(scale: 0.95, opacity: 0.7))
         }
         .font(.satoshi(.regular, size: 11))
-        .foregroundStyle(.white.opacity(0.2))
+        .foregroundStyle(GlassTheme.textTertiary)
     }
-
-
 }

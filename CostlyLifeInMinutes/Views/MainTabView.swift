@@ -9,7 +9,7 @@ struct MainTabView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color.black.ignoresSafeArea()
+            GlassTheme.bgPrimary.ignoresSafeArea()
 
             Group {
                 switch selectedTab {
@@ -37,7 +37,7 @@ struct MainTabView: View {
             }
             .animation(.spring(response: 0.4, dampingFraction: 0.85), value: selectedTab)
 
-            bottomBar
+            floatingTabBar
 
             plusButton
         }
@@ -55,55 +55,47 @@ struct MainTabView: View {
                     showLogSheet = true
                 } label: {
                     Image(systemName: "plus")
-                        .font(.system(size: 22, weight: .medium))
-                        .foregroundStyle(.black)
-                        .frame(width: 56, height: 56)
-                        .background(.white)
-                        .clipShape(Circle())
-                        .shadow(color: .white.opacity(0.06), radius: 16, y: 4)
-                        .shadow(color: .white.opacity(0.03), radius: 32, y: 8)
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 52, height: 52)
+                        .background(
+                            Circle()
+                                .fill(GlassTheme.textPrimary)
+                                .shadow(color: Color.black.opacity(0.15), radius: 12, y: 6)
+                                .shadow(color: Color.black.opacity(0.08), radius: 2, y: 1)
+                        )
                 }
                 .buttonStyle(PremiumButtonStyle(scale: 0.88, opacity: 0.9))
                 .sensoryFeedback(.impact(weight: .heavy, intensity: 0.7), trigger: showLogSheet)
                 .padding(.trailing, 20)
-                .padding(.bottom, 78)
+                .padding(.bottom, 86)
             }
         }
         .ignoresSafeArea(edges: .bottom)
     }
 
-    private var bottomBar: some View {
-        HStack(spacing: 0) {
+    private var floatingTabBar: some View {
+        HStack(spacing: 4) {
             tabItem(icon: "house", filledIcon: "house.fill", label: "Home", tag: 0)
-
-            Spacer()
 
             tabItem(icon: "building.columns", filledIcon: "building.columns.fill", label: "Time Bank", tag: 1)
 
-            Spacer()
-
             tabItem(icon: "person", filledIcon: "person.fill", label: "Profile", tag: 2)
         }
-        .padding(.horizontal, 32)
-        .padding(.top, 10)
-        .padding(.bottom, 6)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
         .background(
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .colorScheme(.dark)
-                .ignoresSafeArea(edges: .bottom)
-                .overlay(alignment: .top) {
-                    Rectangle()
-                        .fill(
-                            LinearGradient(
-                                colors: [.white.opacity(0.08), .white.opacity(0.02)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(height: 0.5)
-                }
+            Capsule()
+                .fill(.ultraThickMaterial)
+                .shadow(color: Color.black.opacity(0.08), radius: 20, y: 8)
+                .shadow(color: Color.black.opacity(0.03), radius: 2, y: 0)
         )
+        .overlay(
+            Capsule()
+                .stroke(Color.white.opacity(0.5), lineWidth: 0.5)
+        )
+        .padding(.horizontal, 40)
+        .padding(.bottom, 8)
     }
 
     private func tabItem(icon: String, filledIcon: String, label: String, tag: Int) -> some View {
@@ -113,20 +105,34 @@ struct MainTabView: View {
                 selectedTab = tag
             }
         } label: {
-            VStack(spacing: 4) {
+            HStack(spacing: 6) {
                 Image(systemName: selectedTab == tag ? filledIcon : icon)
-                    .font(.system(size: 18))
-                    .foregroundStyle(selectedTab == tag ? .white : .white.opacity(0.3))
+                    .font(.system(size: 16, weight: .medium))
                     .contentTransition(.symbolEffect(.replace.downUp.byLayer))
-                    .scaleEffect(selectedTab == tag ? 1.0 : 0.92)
-                    .animation(.spring(response: 0.3, dampingFraction: 0.6), value: selectedTab)
 
-                Text(label)
-                    .font(.satoshi(.medium, size: 9))
-                    .foregroundStyle(selectedTab == tag ? .white.opacity(0.9) : .white.opacity(0.25))
-                    .animation(.easeOut(duration: 0.2), value: selectedTab)
+                if selectedTab == tag {
+                    Text(label)
+                        .font(.satoshi(.bold, size: 11))
+                        .lineLimit(1)
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .scale(scale: 0.8)),
+                            removal: .opacity.combined(with: .scale(scale: 0.8))
+                        ))
+                }
             }
-            .frame(width: 56)
+            .foregroundStyle(selectedTab == tag ? .white : GlassTheme.textTertiary)
+            .padding(.horizontal, selectedTab == tag ? 14 : 12)
+            .padding(.vertical, 10)
+            .background(
+                Group {
+                    if selectedTab == tag {
+                        Capsule()
+                            .fill(GlassTheme.textPrimary)
+                            .shadow(color: Color.black.opacity(0.1), radius: 4, y: 2)
+                    }
+                }
+            )
+            .animation(.spring(response: 0.35, dampingFraction: 0.75), value: selectedTab)
         }
         .buttonStyle(PremiumButtonStyle(scale: 0.9, opacity: 0.7))
         .sensoryFeedback(.impact(weight: .light, intensity: 0.4), trigger: selectedTab)

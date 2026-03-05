@@ -30,7 +30,7 @@ struct LogActivityView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            GlassTheme.bgPrimary.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 header
@@ -61,7 +61,7 @@ struct LogActivityView: View {
                         .foregroundStyle(.white)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)
-                        .background(Color.white.opacity(0.06))
+                        .background(GlassTheme.textPrimary)
                         .clipShape(Capsule())
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                         .padding(.bottom, 24)
@@ -82,10 +82,10 @@ struct LogActivityView: View {
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.white.opacity(0.5))
+                    .foregroundStyle(GlassTheme.textSecondary)
                     .frame(width: 38, height: 38)
-                    .background(Color.white.opacity(0.05))
-                    .clipShape(Circle())
+                    .background(.ultraThinMaterial, in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.5), lineWidth: 0.5))
             }
             .buttonStyle(PremiumButtonStyle(scale: 0.88, opacity: 0.7))
             .sensoryFeedback(.impact(weight: .light, intensity: 0.3), trigger: false)
@@ -94,7 +94,7 @@ struct LogActivityView: View {
 
             Text("LOG ACTIVITY")
                 .font(.satoshi(.bold, size: 10))
-                .foregroundStyle(.white.opacity(0.35))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .tracking(2)
 
             Spacer()
@@ -115,8 +115,8 @@ struct LogActivityView: View {
             }
         }
         .padding(3)
-        .background(Color(white: 0.05))
-        .clipShape(Capsule())
+        .background(.ultraThinMaterial, in: Capsule())
+        .overlay(Capsule().stroke(Color.white.opacity(0.5), lineWidth: 0.5))
         .padding(.horizontal, 60)
         .sensoryFeedback(.impact(weight: .light, intensity: 0.3), trigger: mode)
     }
@@ -129,10 +129,10 @@ struct LogActivityView: View {
                 Text(title)
                     .font(.satoshi(.medium, size: 12))
             }
-            .foregroundStyle(isSelected ? .white : .white.opacity(0.25))
+            .foregroundStyle(isSelected ? .white : GlassTheme.textTertiary)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .background(isSelected ? Color.white.opacity(0.08) : Color.clear)
+            .background(isSelected ? GlassTheme.textPrimary : Color.clear)
             .clipShape(Capsule())
         }
         .buttonStyle(PremiumPillButtonStyle())
@@ -152,7 +152,7 @@ struct LogActivityView: View {
 
             Text("Point camera at food, drinks, or items")
                 .font(.satoshi(.regular, size: 13))
-                .foregroundStyle(.white.opacity(0.25))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .padding(.bottom, 16)
 
             Button {
@@ -165,11 +165,11 @@ struct LogActivityView: View {
             } label: {
                 ZStack {
                     Circle()
-                        .stroke(.white.opacity(0.2), lineWidth: 3)
+                        .stroke(GlassTheme.textPrimary.opacity(0.2), lineWidth: 3)
                         .frame(width: 78, height: 78)
 
                     Circle()
-                        .fill(.white)
+                        .fill(GlassTheme.textPrimary)
                         .frame(width: 64, height: 64)
                         .scaleEffect(shutterScale)
                 }
@@ -191,7 +191,7 @@ struct LogActivityView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(group.category.rawValue.uppercased())
                             .font(.satoshi(.bold, size: 9))
-                            .foregroundStyle(.white.opacity(0.2))
+                            .foregroundStyle(GlassTheme.textTertiary)
                             .tracking(1.5)
                             .padding(.horizontal, 16)
 
@@ -212,13 +212,13 @@ struct LogActivityView: View {
 
                                 if index < group.activities.count - 1 {
                                     Rectangle()
-                                        .fill(.white.opacity(0.03))
+                                        .fill(GlassTheme.separator.opacity(0.5))
                                         .frame(height: 0.5)
                                         .padding(.leading, 56)
                                 }
                             }
                         }
-                        .premiumCardStyle(cornerRadius: 14)
+                        .glassCard(cornerRadius: 14)
                         .padding(.horizontal, 16)
                     }
                     .premiumStagger(appeared: appeared, index: sectionIndex, baseDelay: 0.06)
@@ -234,29 +234,29 @@ struct LogActivityView: View {
         HStack(spacing: 8) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 14))
-                .foregroundStyle(.white.opacity(0.25))
+                .foregroundStyle(GlassTheme.textTertiary)
 
-            TextField("", text: $searchText, prompt: Text("Search activities...").foregroundStyle(.white.opacity(0.18)))
+            TextField("", text: $searchText, prompt: Text("Search activities...").foregroundStyle(GlassTheme.textTertiary))
                 .font(.satoshi(.regular, size: 15))
-                .foregroundStyle(.white)
+                .foregroundStyle(GlassTheme.textPrimary)
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 11)
-        .premiumCardStyle(cornerRadius: 14)
+        .glassCard(cornerRadius: 14)
     }
 
     private func activityRow(_ activity: Activity) -> some View {
         HStack(spacing: 12) {
             Image(systemName: activity.icon)
                 .font(.system(size: 14, weight: .light))
-                .foregroundStyle(.white.opacity(0.35))
+                .foregroundStyle(GlassTheme.textSecondary)
                 .frame(width: 32, height: 32)
-                .background(Color.white.opacity(0.03))
+                .background(GlassTheme.bgPrimary)
                 .clipShape(.rect(cornerRadius: 8))
 
             Text(activity.name)
                 .font(.satoshi(.regular, size: 14))
-                .foregroundStyle(.white.opacity(0.75))
+                .foregroundStyle(GlassTheme.textPrimary)
 
             Spacer()
 
@@ -277,7 +277,7 @@ struct LogActivityView: View {
                 HStack {
                     Text("DETECTED")
                         .font(.satoshi(.bold, size: 9))
-                        .foregroundStyle(.white.opacity(0.25))
+                        .foregroundStyle(GlassTheme.textTertiary)
                         .tracking(1.5)
                     Spacer()
                     Button {
@@ -285,7 +285,7 @@ struct LogActivityView: View {
                     } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(.white.opacity(0.25))
+                            .foregroundStyle(GlassTheme.textTertiary)
                     }
                     .buttonStyle(PremiumButtonStyle(scale: 0.85, opacity: 0.6))
                 }
@@ -293,18 +293,17 @@ struct LogActivityView: View {
                 HStack(spacing: 14) {
                     Image(systemName: activity.icon)
                         .font(.system(size: 28, weight: .light))
-                        .foregroundStyle(.white.opacity(0.45))
+                        .foregroundStyle(GlassTheme.textSecondary)
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text(activity.name)
                             .font(.satoshi(.medium, size: 18))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(GlassTheme.textPrimary)
 
                         Text("\(activity.formattedDelta) minutes")
                             .font(.satoshi(.light, size: 26))
                             .foregroundStyle(activity.isPositive ? GlassTheme.positive : GlassTheme.negative)
                     }
-
                     Spacer()
                 }
 
@@ -317,29 +316,17 @@ struct LogActivityView: View {
                 } label: {
                     Text("Log This")
                         .font(.satoshi(.bold, size: 16))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 50)
-                        .background(.white)
+                        .background(GlassTheme.textPrimary)
                         .clipShape(.rect(cornerRadius: 14))
                 }
                 .buttonStyle(PremiumCTAButtonStyle())
                 .sensoryFeedback(activity.isPositive ? .success : .warning, trigger: store.entries.count)
             }
             .padding(22)
-            .background(Color(white: 0.07))
-            .clipShape(.rect(cornerRadius: 22))
-            .overlay(
-                RoundedRectangle(cornerRadius: 22)
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 0.5
-                    )
-            )
+            .glassCard(cornerRadius: 22)
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
         }
@@ -374,21 +361,21 @@ struct CameraUnavailablePlaceholder: View {
         VStack(spacing: 18) {
             Image(systemName: "camera.viewfinder")
                 .font(.system(size: 44, weight: .ultraLight))
-                .foregroundStyle(.white.opacity(pulse ? 0.14 : 0.08))
+                .foregroundStyle(GlassTheme.textTertiary.opacity(pulse ? 0.5 : 0.25))
                 .animation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true), value: pulse)
 
             Text("Camera Preview")
                 .font(.satoshi(.medium, size: 18))
-                .foregroundStyle(.white.opacity(0.35))
+                .foregroundStyle(GlassTheme.textSecondary)
 
             Text("Install this app on your device\nvia the Rork App to use the camera.")
                 .font(.satoshi(.regular, size: 13))
-                .foregroundStyle(.white.opacity(0.18))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 280)
-        .premiumCardStyle(cornerRadius: 18)
+        .glassCard(cornerRadius: 18)
         .onAppear { pulse = true }
     }
 }

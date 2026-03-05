@@ -42,19 +42,25 @@ struct HomeView: View {
         store.todayNetMinutes + healthKit.healthMinutesBalance
     }
 
+    private var greeting: String {
+        let hour = Calendar.current.component(.hour, from: .now)
+        if hour < 12 { return "Good Morning" }
+        if hour < 17 { return "Good Afternoon" }
+        return "Good Evening"
+    }
+
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            GlassTheme.bgPrimary.ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 16) {
-                    navBar
+                VStack(spacing: 20) {
+                    greetingHeader
                         .padding(.horizontal, 20)
                         .padding(.top, 8)
                         .premiumStagger(appeared: appeared, index: 0)
 
-                    daySelector
-                        .padding(.horizontal, 20)
+                    weekStrip
                         .premiumStagger(appeared: appeared, index: 1)
 
                     heroCard
@@ -94,11 +100,17 @@ struct HomeView: View {
         }
     }
 
-    private var navBar: some View {
-        HStack(spacing: 12) {
-            Text("Costly")
-                .font(.satoshi(.bold, size: 24))
-                .foregroundStyle(.white)
+    private var greetingHeader: some View {
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(greeting)
+                    .font(.satoshi(.regular, size: 14))
+                    .foregroundStyle(GlassTheme.textTertiary)
+
+                Text(store.profile.name.isEmpty ? "Welcome" : store.profile.name)
+                    .font(.satoshi(.bold, size: 28))
+                    .foregroundStyle(GlassTheme.textPrimary)
+            }
 
             Spacer()
 
@@ -109,47 +121,64 @@ struct HomeView: View {
                     .symbolEffect(.pulse, options: .repeating, value: store.todayEntries.count)
                 Text("\(store.todayEntries.count)")
                     .font(.satoshi(.bold, size: 13))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(GlassTheme.textPrimary)
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 6)
-            .background(Color.white.opacity(0.06))
-            .clipShape(Capsule())
+            .background(.ultraThinMaterial, in: Capsule())
+            .overlay(Capsule().stroke(Color.white.opacity(0.5), lineWidth: 0.5))
         }
     }
 
-    private var daySelector: some View {
-        HStack(spacing: 16) {
-            Button {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedDay = 0 }
-            } label: {
-                VStack(spacing: 4) {
-                    Text("Today")
-                        .font(.satoshi(.bold, size: 15))
-                        .foregroundStyle(selectedDay == 0 ? .white : .white.opacity(0.3))
-                    if selectedDay == 0 {
-                        Circle()
-                            .fill(.white)
-                            .frame(width: 4, height: 4)
-                            .transition(.scale.combined(with: .opacity))
+    private var weekStrip: some View {
+        let calendar = Calendar.current
+        let today = Date.now
+        let weekday = calendar.component(.weekday, from: today)
+        let startOfWeek = calendar.date(byAdding: .day, value: -(weekday - 2), to: today) ?? today
+        let days = (0..<7).map { calendar.date(byAdding: .day, value: $0, to: startOfWeek) ?? today }
+        let dayLetters = ["M", "T", "W", "T", "F", "S", "S"]
+        let todayIndex = days.firstIndex(where: { calendar.isDate($0, inSameDayAs: today) }) ?? 0
+        let todayDayName = today.formatted(.dateTime.weekday(.wide))
+
+        return VStack(spacing: 8) {
+            HStack {
+                Spacer()
+                Text(todayDayName)
+                    .font(.satoshi(.bold, size: 14))
+                    .foregroundStyle(GlassTheme.textPrimary)
+                Circle()
+                    .fill(GlassTheme.accent)
+                    .frame(width: 4, height: 4)
+                    .offset(y: -1)
+                Spacer()
+            }
+
+            HStack(spacing: 12) {
+                ForEach(0..<7, id: \.self) { index in
+                    VStack(spacing: 6) {
+                        Text(dayLetters[index])
+                            .font(.satoshi(.medium, size: 11))
+                            .foregroundStyle(GlassTheme.textTertiary)
+
+                        let dayNum = calendar.component(.day, from: days[index])
+                        Text("\(dayNum)")
+                            .font(.satoshi(.bold, size: 13))
+                            .foregroundStyle(index == todayIndex ? .white : GlassTheme.textSecondary)
+                            .frame(width: 32, height: 32)
+                            .background(
+                                Group {
+                                    if index == todayIndex {
+                                        Circle()
+                                            .fill(GlassTheme.textPrimary)
+                                    }
+                                }
+                            )
                     }
                 }
             }
-            .buttonStyle(PremiumButtonStyle(scale: 0.95, opacity: 0.7))
-            .sensoryFeedback(.impact(weight: .light, intensity: 0.3), trigger: selectedDay)
-
-            Button {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedDay = 1 }
-            } label: {
-                Text("This Week")
-                    .font(.satoshi(.medium, size: 15))
-                    .foregroundStyle(selectedDay == 1 ? .white : .white.opacity(0.3))
-            }
-            .buttonStyle(PremiumButtonStyle(scale: 0.95, opacity: 0.7))
-            .sensoryFeedback(.impact(weight: .light, intensity: 0.3), trigger: selectedDay)
-
-            Spacer()
         }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 20)
     }
 
     private var heroCard: some View {
@@ -158,12 +187,12 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("BIOLOGICAL")
                         .font(.satoshi(.bold, size: 9))
-                        .foregroundStyle(.white.opacity(0.2))
+                        .foregroundStyle(GlassTheme.textTertiary)
                         .tracking(1.5)
 
                     Text(String(format: "%.1f", bioAge))
                         .font(.satoshi(.light, size: 48))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(GlassTheme.textPrimary)
                         .contentTransition(.numericText())
                         .monospacedDigit()
 
@@ -179,7 +208,7 @@ struct HomeView: View {
                 Spacer()
 
                 Rectangle()
-                    .fill(.white.opacity(0.06))
+                    .fill(GlassTheme.separator)
                     .frame(width: 0.5, height: 70)
 
                 Spacer()
@@ -187,7 +216,7 @@ struct HomeView: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     Text("COSTLY AGE")
                         .font(.satoshi(.bold, size: 9))
-                        .foregroundStyle(.white.opacity(0.2))
+                        .foregroundStyle(GlassTheme.textTertiary)
                         .tracking(1.5)
 
                     Text(String(format: "%.1f", costlyAge))
@@ -210,14 +239,14 @@ struct HomeView: View {
 
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(.white.opacity(0.04))
+                    .fill(GlassTheme.bgPrimary)
                     .frame(height: 4)
 
                 GeometryReader { geo in
                     Capsule()
                         .fill(
                             LinearGradient(
-                                colors: [GlassTheme.negative, .white.opacity(0.3), GlassTheme.positive],
+                                colors: [GlassTheme.negative.opacity(0.7), GlassTheme.neutral.opacity(0.3), GlassTheme.positive.opacity(0.7)],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )
@@ -235,16 +264,16 @@ struct HomeView: View {
                     Text("Connect Health to refine your Costly Age")
                         .font(.satoshi(.regular, size: 11))
                 }
-                .foregroundStyle(.white.opacity(0.2))
+                .foregroundStyle(GlassTheme.textTertiary)
             }
         }
         .padding(20)
-        .premiumCardStyle()
+        .glassCard()
         .scaleEffect(heroScale)
     }
 
     private var statCards: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
             statCard(
                 value: selectedDay == 0
                     ? GlassTheme.formatMinutes(totalNetMinutes)
@@ -266,7 +295,7 @@ struct HomeView: View {
             statCard(
                 value: "\(store.todayEntries.count)",
                 label: "Logged today",
-                color: .white,
+                color: GlassTheme.textPrimary,
                 icon: "list.bullet"
             )
         }
@@ -274,89 +303,86 @@ struct HomeView: View {
 
     private func statCard(value: String, label: String, color: Color, icon: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 18, weight: .light))
+                .foregroundStyle(GlassTheme.accent.opacity(0.5))
+                .frame(width: 34, height: 34)
+                .background(GlassTheme.accent.opacity(0.06))
+                .clipShape(.rect(cornerRadius: 10))
+
             Text(value)
-                .font(.satoshi(.bold, size: 22))
+                .font(.satoshi(.bold, size: 20))
                 .foregroundStyle(color)
                 .monospacedDigit()
                 .contentTransition(.numericText())
 
             Text(label)
-                .font(.satoshi(.regular, size: 11))
-                .foregroundStyle(.white.opacity(0.3))
+                .font(.satoshi(.regular, size: 10))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .lineLimit(1)
-
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundStyle(.white.opacity(0.1))
-                .frame(width: 32, height: 32)
-                .background(Color.white.opacity(0.03))
-                .clipShape(Circle())
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .premiumCardStyle(cornerRadius: 16)
+        .glassCard(cornerRadius: 16)
     }
 
     private var healthSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("HEALTH")
-                .font(.satoshi(.bold, size: 9))
-                .foregroundStyle(.white.opacity(0.2))
-                .tracking(1.5)
+            Text("Wellness Overview")
+                .font(.satoshi(.bold, size: 18))
+                .foregroundStyle(GlassTheme.textPrimary)
 
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
-                healthMetricCard(icon: "figure.walk", value: "\(healthKit.stepCount)", label: "Steps", color: .white.opacity(0.5))
-                healthMetricCard(icon: "point.bottomleft.forward.to.point.topright.scurvepath", value: String(format: "%.1f km", healthKit.distanceKm), label: "Distance", color: .white.opacity(0.5))
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+                healthMetricCard(icon: "figure.walk", value: "\(healthKit.stepCount)", label: "Steps", color: GlassTheme.accent)
                 healthMetricCard(icon: "flame.fill", value: "\(healthKit.activeMinutes)", label: "Activity Min", color: GlassTheme.positive)
-                healthMetricCard(icon: "bolt.fill", value: "\(healthKit.caloriesBurned)", label: "Calories", color: Color(red: 1.0, green: 0.55, blue: 0.2))
                 if healthKit.sleepHours > 0 {
-                    healthMetricCard(icon: "bed.double.fill", value: String(format: "%.1f hrs", healthKit.sleepHours), label: "Sleep", color: healthKit.sleepHours >= 7 ? GlassTheme.positive : GlassTheme.negative)
+                    healthMetricCard(icon: "bed.double.fill", value: String(format: "%.1f hrs", healthKit.sleepHours), label: "Sleep", color: Color(red: 0.4, green: 0.55, blue: 0.85))
                 }
                 if healthKit.heartRate > 0 {
-                    healthMetricCard(icon: "heart.fill", value: "\(Int(healthKit.heartRate))", label: "BPM", color: Color(red: 0.95, green: 0.35, blue: 0.4))
+                    healthMetricCard(icon: "heart.fill", value: "\(Int(healthKit.heartRate))", label: "BPM", color: Color(red: 0.9, green: 0.35, blue: 0.4))
                 }
+                healthMetricCard(icon: "point.bottomleft.forward.to.point.topright.scurvepath", value: String(format: "%.1f km", healthKit.distanceKm), label: "Distance", color: GlassTheme.textSecondary)
+                healthMetricCard(icon: "bolt.fill", value: "\(healthKit.caloriesBurned)", label: "Calories", color: Color(red: 1.0, green: 0.55, blue: 0.2))
             }
         }
     }
 
     private func healthMetricCard(icon: String, value: String, label: String, color: Color) -> some View {
-        HStack(spacing: 10) {
+        VStack(alignment: .leading, spacing: 10) {
             Image(systemName: icon)
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: 20, weight: .light))
                 .foregroundStyle(color)
-                .frame(width: 30, height: 30)
+                .frame(width: 36, height: 36)
                 .background(color.opacity(0.08))
-                .clipShape(.rect(cornerRadius: 8))
+                .clipShape(.rect(cornerRadius: 10))
 
-            VStack(alignment: .leading, spacing: 1) {
-                Text(value)
-                    .font(.satoshi(.bold, size: 15))
-                    .foregroundStyle(.white)
-                    .monospacedDigit()
-                Text(label)
-                    .font(.satoshi(.regular, size: 10))
-                    .foregroundStyle(.white.opacity(0.25))
-            }
+            Text(label)
+                .font(.satoshi(.medium, size: 12))
+                .foregroundStyle(GlassTheme.textTertiary)
 
-            Spacer()
+            Text(value)
+                .font(.satoshi(.bold, size: 18))
+                .foregroundStyle(GlassTheme.textPrimary)
+                .monospacedDigit()
         }
-        .padding(12)
-        .premiumCardStyle(cornerRadius: 14)
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .glassCard(cornerRadius: 16)
     }
 
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Recently logged")
+                Text("Recently Logged")
                     .font(.satoshi(.bold, size: 18))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(GlassTheme.textPrimary)
 
                 Spacer()
 
                 if !store.todayEntries.isEmpty {
-                    Text("\(store.todayEntries.count) today")
-                        .font(.satoshi(.regular, size: 12))
-                        .foregroundStyle(.white.opacity(0.25))
+                    Text("See All")
+                        .font(.satoshi(.medium, size: 13))
+                        .foregroundStyle(GlassTheme.accent)
                 }
             }
 
@@ -371,13 +397,13 @@ struct HomeView: View {
 
                         if index < min(displayEntries.count, 10) - 1 {
                             Rectangle()
-                                .fill(.white.opacity(0.03))
+                                .fill(GlassTheme.separator.opacity(0.5))
                                 .frame(height: 0.5)
                                 .padding(.leading, 56)
                         }
                     }
                 }
-                .premiumCardStyle(cornerRadius: 16)
+                .glassCard(cornerRadius: 16)
             }
         }
     }
@@ -386,33 +412,33 @@ struct HomeView: View {
         VStack(spacing: 12) {
             Image(systemName: "plus.circle.dashed")
                 .font(.system(size: 36, weight: .ultraLight))
-                .foregroundStyle(.white.opacity(0.08))
+                .foregroundStyle(GlassTheme.textTertiary.opacity(0.4))
 
             Text("Log your first activity")
                 .font(.satoshi(.regular, size: 14))
-                .foregroundStyle(.white.opacity(0.18))
+                .foregroundStyle(GlassTheme.textTertiary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 36)
-        .premiumCardStyle(cornerRadius: 16)
+        .glassCard(cornerRadius: 16)
     }
 
     private func entryRow(entry: LogEntry) -> some View {
         HStack(spacing: 12) {
             Image(systemName: entry.activityIcon)
                 .font(.system(size: 16, weight: .light))
-                .foregroundStyle(.white.opacity(0.35))
+                .foregroundStyle(GlassTheme.textSecondary)
                 .frame(width: 36, height: 36)
-                .background(Color.white.opacity(0.03))
+                .background(GlassTheme.bgPrimary)
                 .clipShape(.rect(cornerRadius: 10))
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.activityName)
                     .font(.satoshi(.medium, size: 14))
-                    .foregroundStyle(.white.opacity(0.85))
+                    .foregroundStyle(GlassTheme.textPrimary)
                 Text(entry.timestamp, style: .time)
                     .font(.satoshi(.regular, size: 11))
-                    .foregroundStyle(.white.opacity(0.2))
+                    .foregroundStyle(GlassTheme.textTertiary)
             }
 
             Spacer()
@@ -428,11 +454,5 @@ struct HomeView: View {
     private var ageProgress: CGFloat {
         let normalized = min(max(bioAge / 100.0, 0), 1)
         return CGFloat(normalized)
-    }
-
-    private var ageTintColor: Color {
-        if ageDelta >= 1.0 { return GlassTheme.positive }
-        if ageDelta <= -1.0 { return GlassTheme.negative }
-        return Color(white: 0.4)
     }
 }

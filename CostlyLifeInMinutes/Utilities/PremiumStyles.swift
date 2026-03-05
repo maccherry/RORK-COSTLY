@@ -30,7 +30,7 @@ struct PremiumPillButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.93 : 1.0)
-            .brightness(configuration.isPressed ? -0.05 : 0)
+            .brightness(configuration.isPressed ? -0.03 : 0)
             .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }
@@ -39,7 +39,7 @@ struct PremiumCTAButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .brightness(configuration.isPressed ? -0.08 : 0)
+            .brightness(configuration.isPressed ? -0.06 : 0)
             .animation(.spring(response: 0.2, dampingFraction: 0.65), value: configuration.isPressed)
     }
 }
@@ -51,7 +51,7 @@ struct ShimmerModifier: ViewModifier {
         content
             .overlay(
                 LinearGradient(
-                    colors: [.clear, .white.opacity(0.04), .clear],
+                    colors: [.clear, .white.opacity(0.15), .clear],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -72,21 +72,43 @@ extension View {
         modifier(ShimmerModifier())
     }
 
-    func premiumCardStyle(cornerRadius: CGFloat = 20) -> some View {
+    func glassCard(cornerRadius: CGFloat = 20) -> some View {
         self
-            .background(Color(white: 0.06))
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(.white)
+                    .shadow(color: Color.black.opacity(0.04), radius: 12, y: 4)
+                    .shadow(color: Color.black.opacity(0.02), radius: 1, y: 0)
+            )
             .clipShape(.rect(cornerRadius: cornerRadius))
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(Color.white.opacity(0.8), lineWidth: 0.5)
+            )
+    }
+
+    func frostCard(cornerRadius: CGFloat = 20) -> some View {
+        self
+            .background(
+                .ultraThinMaterial,
+                in: .rect(cornerRadius: cornerRadius)
+            )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(
                         LinearGradient(
-                            colors: [Color.white.opacity(0.08), Color.white.opacity(0.02)],
+                            colors: [Color.white.opacity(0.7), Color.white.opacity(0.3)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
                         lineWidth: 0.5
                     )
             )
+            .shadow(color: Color.black.opacity(0.06), radius: 16, y: 6)
+    }
+
+    func premiumCardStyle(cornerRadius: CGFloat = 20) -> some View {
+        self.glassCard(cornerRadius: cornerRadius)
     }
 
     func premiumStagger(appeared: Bool, index: Int, baseDelay: Double = 0.04) -> some View {
