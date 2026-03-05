@@ -5,8 +5,7 @@ struct PaywallView: View {
     @State private var selectedPlan: Plan = .yearly
     @State private var trialEnabled: Bool = true
     @State private var appeared: Bool = false
-    @State private var showOKXOffer: Bool = false
-    @State private var dismissAttempted: Bool = false
+
     let store: DataStore
 
     nonisolated enum Plan: String, CaseIterable {
@@ -65,10 +64,7 @@ struct PaywallView: View {
                 Spacer()
             }
 
-            if showOKXOffer {
-                okxOfferOverlay
-                    .transition(.opacity.combined(with: .scale(scale: 0.92)))
-            }
+
         }
         .onAppear {
             withAnimation(.spring(response: 0.7, dampingFraction: 0.8)) {
@@ -78,14 +74,7 @@ struct PaywallView: View {
     }
 
     private func handleDismiss() {
-        if !dismissAttempted {
-            dismissAttempted = true
-            withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-                showOKXOffer = true
-            }
-        } else {
-            dismiss()
-        }
+        dismiss()
     }
 
     private var heroSection: some View {
@@ -129,39 +118,57 @@ struct PaywallView: View {
 
     private var featuresSection: some View {
         VStack(spacing: 0) {
-            featureRow(icon: "camera.fill", title: "AI Scan & Log", subtitle: "Point your camera at any food or drink")
+            featureRow(
+                icon: "camera.viewfinder",
+                title: "Instant AI Scanning",
+                subtitle: "Snap anything you eat, drink, or do — AI reveals the exact minutes it costs your life in real time"
+            )
             featureDivider
-            featureRow(icon: "heart.text.clipboard", title: "Biological Age", subtitle: "Track your real age based on habits")
+            featureRow(
+                icon: "waveform.path.ecg",
+                title: "Your True Biological Age",
+                subtitle: "Powered by Apple Health data — watch your real age drop as you make better choices every single day"
+            )
             featureDivider
-            featureRow(icon: "heart.fill", title: "Apple Health", subtitle: "Sync steps, sleep, and workouts")
+            featureRow(
+                icon: "flame.fill",
+                title: "Every Minute Visualized",
+                subtitle: "See a live timeline of minutes gained and lost — the accountability system your future self will thank you for"
+            )
             featureDivider
-            featureRow(icon: "chart.bar.fill", title: "Life Stats", subtitle: "Deep insights into your daily habits")
+            featureRow(
+                icon: "trophy.fill",
+                title: "Earn Back Your Life",
+                subtitle: "Turn positive habits into real rewards — the only app that pays you in time for living better"
+            )
         }
         .premiumCardStyle(cornerRadius: 18)
     }
 
     private func featureRow(icon: String, title: String, subtitle: String) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 14) {
             Image(systemName: icon)
-                .font(.system(size: 14))
-                .foregroundStyle(.white.opacity(0.4))
-                .frame(width: 32, height: 32)
-                .background(Color.white.opacity(0.03))
-                .clipShape(.rect(cornerRadius: 8))
+                .font(.system(size: 15))
+                .foregroundStyle(.white.opacity(0.5))
+                .frame(width: 36, height: 36)
+                .background(Color.white.opacity(0.04))
+                .clipShape(.rect(cornerRadius: 9))
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(.satoshi(.medium, size: 14))
-                    .foregroundStyle(.white.opacity(0.85))
+                    .font(.satoshi(.bold, size: 14))
+                    .foregroundStyle(.white.opacity(0.9))
                 Text(subtitle)
-                    .font(.satoshi(.regular, size: 11))
-                    .foregroundStyle(.white.opacity(0.25))
+                    .font(.satoshi(.regular, size: 12))
+                    .foregroundStyle(.white.opacity(0.35))
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 13)
+        .padding(.vertical, 15)
     }
 
     private var featureDivider: some View {
@@ -318,141 +325,5 @@ struct PaywallView: View {
         .foregroundStyle(.white.opacity(0.2))
     }
 
-    // MARK: - OKX Popup Offer
 
-    private var okxOfferOverlay: some View {
-        ZStack {
-            Color.black.opacity(0.85)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showOKXOffer = false
-                    }
-                }
-
-            VStack(spacing: 0) {
-                VStack(spacing: 20) {
-                    Spacer().frame(height: 4)
-
-                    ZStack {
-                        Circle()
-                            .fill(Color(white: 0.08))
-                            .frame(width: 64, height: 64)
-                            .overlay(
-                                Circle()
-                                    .stroke(
-                                        LinearGradient(
-                                            colors: [Color.white.opacity(0.12), Color.white.opacity(0.03)],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ),
-                                        lineWidth: 0.5
-                                    )
-                            )
-
-                        Text("OKX")
-                            .font(.satoshi(.black, size: 16))
-                            .foregroundStyle(.white.opacity(0.85))
-                    }
-
-                    VStack(spacing: 8) {
-                        Text("Wait -- get 1 year free")
-                            .font(.satoshi(.bold, size: 22))
-                            .foregroundStyle(.white)
-
-                        Text("Sign up with OKX and unlock Costly Premium for an entire year, completely free.")
-                            .font(.satoshi(.regular, size: 14))
-                            .foregroundStyle(.white.opacity(0.45))
-                            .multilineTextAlignment(.center)
-                            .lineSpacing(3)
-                    }
-
-                    VStack(spacing: 0) {
-                        okxPerk(icon: "crown.fill", text: "Full Premium access for 12 months")
-                        perkDivider
-                        okxPerk(icon: "banknote.fill", text: "Unlock the Time Bank")
-                        perkDivider
-                        okxPerk(icon: "arrow.triangle.2.circlepath", text: "Redeem minutes to USDC monthly")
-                    }
-                    .premiumCardStyle(cornerRadius: 14)
-
-                    Button {
-                        if let url = URL(string: "https://www.okx.com/join") {
-                            UIApplication.shared.open(url)
-                        }
-                    } label: {
-                        HStack(spacing: 8) {
-                            Text("Claim Free Year")
-                                .font(.satoshi(.bold, size: 16))
-                            Image(systemName: "arrow.right")
-                                .font(.system(size: 13, weight: .bold))
-                        }
-                        .foregroundStyle(.black)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 52)
-                        .background(.white)
-                        .clipShape(.rect(cornerRadius: 26))
-                    }
-                    .buttonStyle(PremiumCTAButtonStyle())
-                    .sensoryFeedback(.impact(weight: .heavy, intensity: 0.6), trigger: showOKXOffer)
-
-                    Button {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showOKXOffer = false
-                        }
-                    } label: {
-                        Text("No thanks")
-                            .font(.satoshi(.regular, size: 13))
-                            .foregroundStyle(.white.opacity(0.3))
-                    }
-                    .buttonStyle(PremiumButtonStyle(scale: 0.95, opacity: 0.6))
-
-                    Spacer().frame(height: 4)
-                }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 24)
-                .background(Color(white: 0.06))
-                .clipShape(.rect(cornerRadius: 24))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.12), Color.white.opacity(0.03)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 0.5
-                        )
-                )
-                .premiumShimmer()
-            }
-            .padding(.horizontal, 28)
-        }
-    }
-
-    private func okxPerk(icon: String, text: String) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon)
-                .font(.system(size: 12))
-                .foregroundStyle(.white.opacity(0.4))
-                .frame(width: 28, height: 28)
-                .background(Color.white.opacity(0.04))
-                .clipShape(.rect(cornerRadius: 7))
-
-            Text(text)
-                .font(.satoshi(.medium, size: 13))
-                .foregroundStyle(.white.opacity(0.7))
-
-            Spacer()
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 11)
-    }
-
-    private var perkDivider: some View {
-        Rectangle()
-            .fill(.white.opacity(0.03))
-            .frame(height: 0.5)
-            .padding(.leading, 54)
-    }
 }
