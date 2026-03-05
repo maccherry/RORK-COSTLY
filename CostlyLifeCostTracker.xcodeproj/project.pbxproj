@@ -399,7 +399,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				CODE_SIGN_ENTITLEMENTS = CostlySpendTimeWisely/CostlyLifeInMinutes.entitlements;
+				CODE_SIGN_ENTITLEMENTS = CostlyLifeCostTracker/CostlyLifeInMinutes.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Costly reads your health data to calculate minutes gained or lost from your daily activities.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Costly uses the camera to scan food and drinks to log their time impact.";
@@ -436,7 +436,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				CODE_SIGN_ENTITLEMENTS = CostlySpendTimeWisely/CostlyLifeInMinutes.entitlements;
+				CODE_SIGN_ENTITLEMENTS = CostlyLifeCostTracker/CostlyLifeInMinutes.entitlements;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Costly reads your health data to calculate minutes gained or lost from your daily activities.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Costly uses the camera to scan food and drinks to log their time impact.";
@@ -482,7 +482,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CostlySpendTimeWisely.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CostlySpendTimeWisely";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CostlyLifeCostTracker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CostlyLifeCostTracker";
 			};
 			name = Debug;
 		};
@@ -504,7 +504,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CostlySpendTimeWisely.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CostlySpendTimeWisely";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CostlyLifeCostTracker.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CostlyLifeCostTracker";
 			};
 			name = Release;
 		};
@@ -524,7 +524,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = CostlySpendTimeWisely;
+				TEST_TARGET_NAME = CostlyLifeCostTracker;
 			};
 			name = Debug;
 		};
@@ -544,7 +544,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = CostlySpendTimeWisely;
+				TEST_TARGET_NAME = CostlyLifeCostTracker;
 			};
 			name = Release;
 		};
