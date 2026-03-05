@@ -4,15 +4,7 @@ struct HomeView: View {
     let store: DataStore
     let healthKit: HealthKitService
     @State private var appeared: Bool = false
-    @State private var pulseRing: Bool = false
     @State private var selectedDay: Int = 0
-    @State private var heroScale: CGFloat = 0.96
-    @State private var ringProgress: CGFloat = 0
-
-    private var bioAge: Double {
-        store.profile.biologicalAge(netMinutes: store.allTimeNetMinutes + healthKit.healthMinutesBalance)
-    }
-
     private var costlyAge: Double {
         if healthKit.isAuthorized {
             return store.profile.costlyAge(
@@ -28,10 +20,6 @@ struct HomeView: View {
 
     private var chronoAge: Double {
         store.profile.preciseAge
-    }
-
-    private var ageDelta: Double {
-        chronoAge - bioAge
     }
 
     private var costlyDelta: Double {
@@ -63,9 +51,13 @@ struct HomeView: View {
                     weekStrip
                         .premiumStagger(appeared: appeared, index: 1)
 
-                    heroCard
-                        .padding(.horizontal, 16)
-                        .premiumStagger(appeared: appeared, index: 2)
+                    CostlyAgeOrbView(
+                        costlyAge: costlyAge,
+                        delta: costlyDelta,
+                        isHealthConnected: healthKit.isAuthorized
+                    )
+                    .padding(.horizontal, 16)
+                    .premiumStagger(appeared: appeared, index: 2)
 
                     statCards
                         .padding(.horizontal, 16)
@@ -89,13 +81,6 @@ struct HomeView: View {
         .onAppear {
             withAnimation(.spring(response: 0.7, dampingFraction: 0.8)) {
                 appeared = true
-                heroScale = 1.0
-            }
-            withAnimation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true)) {
-                pulseRing = true
-            }
-            withAnimation(.spring(response: 1.2, dampingFraction: 0.7).delay(0.3)) {
-                ringProgress = ageProgress
             }
         }
     }
@@ -179,97 +164,6 @@ struct HomeView: View {
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 20)
-    }
-
-    private var heroCard: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("BIOLOGICAL")
-                        .font(.satoshi(.bold, size: 9))
-                        .foregroundStyle(GlassTheme.textTertiary)
-                        .tracking(1.5)
-
-                    Text(String(format: "%.1f", bioAge))
-                        .font(.satoshi(.light, size: 48))
-                        .foregroundStyle(GlassTheme.textPrimary)
-                        .contentTransition(.numericText())
-                        .monospacedDigit()
-
-                    HStack(spacing: 3) {
-                        Image(systemName: ageDelta >= 0 ? "arrow.down" : "arrow.up")
-                            .font(.system(size: 9, weight: .bold))
-                        Text(String(format: "%.1f yrs %@", abs(ageDelta), ageDelta >= 0 ? "younger" : "older"))
-                            .font(.satoshi(.medium, size: 11))
-                    }
-                    .foregroundStyle(ageDelta >= 0 ? GlassTheme.positive : GlassTheme.negative)
-                }
-
-                Spacer()
-
-                Rectangle()
-                    .fill(GlassTheme.separator)
-                    .frame(width: 0.5, height: 70)
-
-                Spacer()
-
-                VStack(alignment: .trailing, spacing: 2) {
-                    Text("COSTLY AGE")
-                        .font(.satoshi(.bold, size: 9))
-                        .foregroundStyle(GlassTheme.textTertiary)
-                        .tracking(1.5)
-
-                    Text(String(format: "%.1f", costlyAge))
-                        .font(.satoshi(.light, size: 48))
-                        .foregroundStyle(costlyDelta >= 0 ? GlassTheme.positive : GlassTheme.negative)
-                        .contentTransition(.numericText())
-                        .monospacedDigit()
-
-                    HStack(spacing: 3) {
-                        Image(systemName: costlyDelta >= 0 ? "arrow.down" : "arrow.up")
-                            .font(.system(size: 9, weight: .bold))
-                        Text(costlyDelta >= 0 ? "improving" : "declining")
-                            .font(.satoshi(.medium, size: 11))
-                    }
-                    .foregroundStyle(costlyDelta >= 0 ? GlassTheme.positive : GlassTheme.negative)
-                }
-            }
-
-            Spacer().frame(height: 16)
-
-            ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(GlassTheme.bgPrimary)
-                    .frame(height: 4)
-
-                GeometryReader { geo in
-                    Capsule()
-                        .fill(
-                            LinearGradient(
-                                colors: [GlassTheme.negative.opacity(0.7), GlassTheme.neutral.opacity(0.3), GlassTheme.positive.opacity(0.7)],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
-                        .frame(width: geo.size.width * ringProgress, height: 4)
-                }
-                .frame(height: 4)
-            }
-
-            if !healthKit.isAuthorized {
-                Spacer().frame(height: 12)
-                HStack(spacing: 6) {
-                    Image(systemName: "heart.text.clipboard")
-                        .font(.system(size: 11))
-                    Text("Connect Health to refine your Costly Age")
-                        .font(.satoshi(.regular, size: 11))
-                }
-                .foregroundStyle(GlassTheme.textTertiary)
-            }
-        }
-        .padding(20)
-        .glassCard()
-        .scaleEffect(heroScale)
     }
 
     private var statCards: some View {
@@ -451,8 +345,4 @@ struct HomeView: View {
         .padding(.vertical, 12)
     }
 
-    private var ageProgress: CGFloat {
-        let normalized = min(max(bioAge / 100.0, 0), 1)
-        return CGFloat(normalized)
-    }
 }
