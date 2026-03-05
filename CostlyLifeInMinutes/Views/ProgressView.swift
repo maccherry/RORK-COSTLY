@@ -67,12 +67,12 @@ struct LifeProgressView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            GlassTheme.bgPrimary.ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: 24) {
                     header
-                        .padding(.top, 16)
+                        .padding(.top, 8)
                         .premiumStagger(appeared: appeared, index: 0)
 
                     heroRing
@@ -97,7 +97,7 @@ struct LifeProgressView: View {
 
                     Spacer().frame(height: 90)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, 16)
             }
             .scrollIndicators(.hidden)
         }
@@ -112,54 +112,51 @@ struct LifeProgressView: View {
         }
     }
 
-    // MARK: - Header
-
     private var header: some View {
         HStack(alignment: .bottom) {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Progress")
                     .font(.satoshi(.bold, size: 28))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(GlassTheme.textPrimary)
                 Text(store.profile.name.isEmpty ? "Your journey" : "\(store.profile.name)'s journey")
                     .font(.satoshi(.regular, size: 13))
-                    .foregroundStyle(.white.opacity(0.35))
+                    .foregroundStyle(GlassTheme.textTertiary)
             }
             Spacer()
             if streakDays > 0 {
                 HStack(spacing: 5) {
                     Image(systemName: "flame.fill")
                         .font(.system(size: 10))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(Color(red: 1.0, green: 0.55, blue: 0.2))
                     Text("\(streakDays)")
                         .font(.satoshi(.bold, size: 13))
-                        .foregroundStyle(.white.opacity(0.8))
+                        .foregroundStyle(GlassTheme.textPrimary)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(.white.opacity(0.06), in: Capsule())
-                .overlay(Capsule().stroke(.white.opacity(0.08), lineWidth: 0.5))
+                .background(.ultraThinMaterial, in: Capsule())
+                .overlay(Capsule().stroke(Color.white.opacity(0.5), lineWidth: 0.5))
             }
         }
+        .padding(.horizontal, 4)
     }
 
-    // MARK: - Hero Ring
-
     private var heroRing: some View {
-        let ringSize: CGFloat = 220
+        let ringSize: CGFloat = 200
 
         return VStack(spacing: 20) {
             ZStack {
                 Circle()
-                    .stroke(.white.opacity(0.04), lineWidth: 1.5)
+                    .stroke(GlassTheme.separator.opacity(0.4), lineWidth: 1)
                     .frame(width: ringSize + 40, height: ringSize + 40)
 
                 Circle()
-                    .stroke(.white.opacity(0.03), lineWidth: 0.5)
-                    .frame(width: ringSize + 70, height: ringSize + 70)
+                    .stroke(GlassTheme.separator.opacity(0.2), lineWidth: 0.5)
+                    .frame(width: ringSize + 64, height: ringSize + 64)
 
                 Circle()
                     .trim(from: 0, to: 1)
-                    .stroke(.white.opacity(0.06), style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                    .stroke(GlassTheme.separator.opacity(0.5), style: StrokeStyle(lineWidth: 6, lineCap: .round))
                     .frame(width: ringSize, height: ringSize)
                     .rotationEffect(.degrees(-90))
 
@@ -167,7 +164,7 @@ struct LifeProgressView: View {
                     .trim(from: 0, to: animateProgress ? progressFraction : 0)
                     .stroke(
                         LinearGradient(
-                            colors: [.white.opacity(0.15), .white.opacity(0.7)],
+                            colors: [GlassTheme.accent.opacity(0.4), GlassTheme.accent],
                             startPoint: .leading,
                             endPoint: .trailing
                         ),
@@ -178,9 +175,9 @@ struct LifeProgressView: View {
 
                 let endAngle = Angle.degrees(-90 + progressFraction * 360)
                 Circle()
-                    .fill(.white)
+                    .fill(GlassTheme.accent)
                     .frame(width: 8, height: 8)
-                    .shadow(color: .white.opacity(0.4), radius: 8)
+                    .shadow(color: GlassTheme.accent.opacity(0.4), radius: 6)
                     .offset(
                         x: cos(endAngle.radians) * (ringSize / 2),
                         y: sin(endAngle.radians) * (ringSize / 2)
@@ -189,14 +186,14 @@ struct LifeProgressView: View {
 
                 VStack(spacing: 6) {
                     Text(formatNet(netMinutes))
-                        .font(.satoshi(.light, size: 52))
-                        .foregroundStyle(.white)
+                        .font(.satoshi(.light, size: 48))
+                        .foregroundStyle(GlassTheme.textPrimary)
                         .contentTransition(.numericText())
                         .monospacedDigit()
 
                     Text("NET MINUTES")
                         .font(.satoshi(.medium, size: 9))
-                        .foregroundStyle(.white.opacity(0.25))
+                        .foregroundStyle(GlassTheme.textTertiary)
                         .tracking(3)
                 }
             }
@@ -205,53 +202,44 @@ struct LifeProgressView: View {
                 VStack(spacing: 3) {
                     Text("+\(totalGained)")
                         .font(.satoshi(.medium, size: 18))
-                        .foregroundStyle(.white.opacity(0.8))
+                        .foregroundStyle(GlassTheme.positive)
                         .monospacedDigit()
                     Text("gained")
                         .font(.satoshi(.regular, size: 10))
-                        .foregroundStyle(.white.opacity(0.25))
+                        .foregroundStyle(GlassTheme.textTertiary)
                 }
 
                 Rectangle()
-                    .fill(.white.opacity(0.08))
+                    .fill(GlassTheme.separator)
                     .frame(width: 0.5, height: 28)
 
                 VStack(spacing: 3) {
                     Text("−\(totalLost)")
                         .font(.satoshi(.medium, size: 18))
-                        .foregroundStyle(.white.opacity(0.5))
+                        .foregroundStyle(GlassTheme.negative)
                         .monospacedDigit()
                     Text("lost")
                         .font(.satoshi(.regular, size: 10))
-                        .foregroundStyle(.white.opacity(0.25))
+                        .foregroundStyle(GlassTheme.textTertiary)
                 }
             }
         }
         .padding(.vertical, 28)
         .frame(maxWidth: .infinity)
-        .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 24)
-                    .fill(Color(white: 0.06))
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(.white.opacity(0.04), lineWidth: 0.5)
-            }
-        )
+        .glassCard(cornerRadius: 24)
     }
-
-    // MARK: - Today Balance
 
     private var todayBalance: some View {
         VStack(spacing: 14) {
             HStack {
                 Text("TODAY")
                     .font(.satoshi(.medium, size: 9))
-                    .foregroundStyle(.white.opacity(0.3))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .tracking(2)
                 Spacer()
                 Text(formatNet(todayNet))
                     .font(.satoshi(.bold, size: 20))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(GlassTheme.minuteColor(todayNet))
                     .monospacedDigit()
                     .contentTransition(.numericText())
             }
@@ -267,36 +255,27 @@ struct LifeProgressView: View {
 
                 ZStack(alignment: .leading) {
                     Capsule()
-                        .fill(.white.opacity(0.04))
+                        .fill(GlassTheme.separator.opacity(0.5))
                         .frame(height: 4)
 
                     Capsule()
-                        .fill(.white.opacity(animateProgress ? 0.5 : 0))
+                        .fill(GlassTheme.accent.opacity(animateProgress ? 0.7 : 0))
                         .frame(width: animateProgress ? max(gainedWidth, 4) : 0, height: 4)
                 }
             }
             .frame(height: 4)
         }
         .padding(18)
-        .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(Color(white: 0.06))
-                RoundedRectangle(cornerRadius: 18)
-                    .stroke(.white.opacity(0.04), lineWidth: 0.5)
-            }
-        )
+        .glassCard(cornerRadius: 18)
     }
 
-    // MARK: - Health Metrics
-
     private var healthMetrics: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("HEALTH")
                 .font(.satoshi(.medium, size: 9))
-                .foregroundStyle(.white.opacity(0.3))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .tracking(2)
-                .padding(.horizontal, 18)
+                .padding(.horizontal, 4)
 
             VStack(spacing: 0) {
                 metricRow(icon: "figure.walk", label: "Steps", value: "\(healthKit.stepCount)")
@@ -319,14 +298,7 @@ struct LifeProgressView: View {
                     metricRow(icon: "bolt", label: "Calories", value: "\(healthKit.caloriesBurned) kcal")
                 }
             }
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(Color(white: 0.06))
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(.white.opacity(0.04), lineWidth: 0.5)
-                }
-            )
+            .glassCard(cornerRadius: 18)
         }
     }
 
@@ -334,16 +306,16 @@ struct LifeProgressView: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.system(size: 13, weight: .light))
-                .foregroundStyle(.white.opacity(0.35))
+                .foregroundStyle(GlassTheme.accent)
                 .frame(width: 20)
 
             Text(label)
                 .font(.satoshi(.regular, size: 14))
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(GlassTheme.textSecondary)
             Spacer()
             Text(value)
                 .font(.satoshi(.medium, size: 14))
-                .foregroundStyle(.white.opacity(0.8))
+                .foregroundStyle(GlassTheme.textPrimary)
                 .monospacedDigit()
         }
         .padding(.horizontal, 18)
@@ -352,24 +324,22 @@ struct LifeProgressView: View {
 
     private var metricDivider: some View {
         Rectangle()
-            .fill(.white.opacity(0.04))
+            .fill(GlassTheme.separator.opacity(0.5))
             .frame(height: 0.5)
             .padding(.leading, 50)
     }
-
-    // MARK: - Weekly Activity
 
     private var weeklyActivity: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Text("THIS WEEK")
                     .font(.satoshi(.medium, size: 9))
-                    .foregroundStyle(.white.opacity(0.3))
+                    .foregroundStyle(GlassTheme.textTertiary)
                     .tracking(2)
                 Spacer()
                 Text(formatNet(store.weekNetMinutes))
                     .font(.satoshi(.medium, size: 14))
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundStyle(GlassTheme.minuteColor(store.weekNetMinutes))
                     .monospacedDigit()
             }
 
@@ -382,13 +352,13 @@ struct LifeProgressView: View {
                         let barHeight = max(CGFloat(abs(data.net)) / CGFloat(maxVal) * 50, 3)
                         let isPositive = data.net >= 0
 
-                        RoundedRectangle(cornerRadius: 2)
-                            .fill(isPositive ? .white.opacity(0.5) : .white.opacity(0.15))
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(isPositive ? GlassTheme.accent : GlassTheme.separator)
                             .frame(height: animateProgress ? barHeight : 3)
 
                         Text(data.day)
                             .font(.satoshi(.medium, size: 9))
-                            .foregroundStyle(.white.opacity(0.2))
+                            .foregroundStyle(GlassTheme.textTertiary)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -396,25 +366,16 @@ struct LifeProgressView: View {
             .frame(height: 80)
         }
         .padding(18)
-        .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(Color(white: 0.06))
-                RoundedRectangle(cornerRadius: 18)
-                    .stroke(.white.opacity(0.04), lineWidth: 0.5)
-            }
-        )
+        .glassCard(cornerRadius: 18)
     }
 
-    // MARK: - Life Stats
-
     private var lifeStats: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("LIFETIME")
                 .font(.satoshi(.medium, size: 9))
-                .foregroundStyle(.white.opacity(0.3))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .tracking(2)
-                .padding(.horizontal, 18)
+                .padding(.horizontal, 4)
 
             VStack(spacing: 0) {
                 statRow(label: "Costly Age", value: String(format: "%.1f", costlyAge))
@@ -432,14 +393,7 @@ struct LifeProgressView: View {
                 let remaining = store.profile.estimatedLifeMinutesRemaining
                 statRow(label: "Est. Life Remaining", value: formatLargeMinutes(remaining))
             }
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(Color(white: 0.06))
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(.white.opacity(0.04), lineWidth: 0.5)
-                }
-            )
+            .glassCard(cornerRadius: 18)
         }
     }
 
@@ -447,26 +401,24 @@ struct LifeProgressView: View {
         HStack {
             Text(label)
                 .font(.satoshi(.regular, size: 14))
-                .foregroundStyle(.white.opacity(0.5))
+                .foregroundStyle(GlassTheme.textSecondary)
             Spacer()
             Text(value)
                 .font(.satoshi(.medium, size: 14))
-                .foregroundStyle(.white.opacity(0.8))
+                .foregroundStyle(GlassTheme.textPrimary)
                 .monospacedDigit()
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 14)
     }
 
-    // MARK: - Milestones
-
     private var milestones: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("MILESTONES")
                 .font(.satoshi(.medium, size: 9))
-                .foregroundStyle(.white.opacity(0.3))
+                .foregroundStyle(GlassTheme.textTertiary)
                 .tracking(2)
-                .padding(.horizontal, 18)
+                .padding(.horizontal, 4)
 
             VStack(spacing: 0) {
                 milestoneRow(title: "First Log", detail: "Log your first activity", achieved: !store.entries.isEmpty, isLast: false)
@@ -474,14 +426,7 @@ struct LifeProgressView: View {
                 milestoneRow(title: "100 Minutes", detail: "Accumulate 100+ positive minutes", achieved: totalGained >= 100, isLast: false)
                 milestoneRow(title: "Week Warrior", detail: "7 consecutive positive days", achieved: streakDays >= 7, isLast: true)
             }
-            .background(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(Color(white: 0.06))
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(.white.opacity(0.04), lineWidth: 0.5)
-                }
-            )
+            .glassCard(cornerRadius: 18)
         }
     }
 
@@ -489,16 +434,16 @@ struct LifeProgressView: View {
         VStack(spacing: 0) {
             HStack(spacing: 14) {
                 Circle()
-                    .fill(achieved ? .white.opacity(0.8) : .white.opacity(0.06))
+                    .fill(achieved ? GlassTheme.accent : GlassTheme.separator)
                     .frame(width: 8, height: 8)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.satoshi(.medium, size: 14))
-                        .foregroundStyle(achieved ? .white.opacity(0.9) : .white.opacity(0.25))
+                        .foregroundStyle(achieved ? GlassTheme.textPrimary : GlassTheme.textTertiary)
                     Text(detail)
                         .font(.satoshi(.regular, size: 11))
-                        .foregroundStyle(.white.opacity(0.2))
+                        .foregroundStyle(GlassTheme.textTertiary)
                 }
 
                 Spacer()
@@ -506,7 +451,7 @@ struct LifeProgressView: View {
                 if achieved {
                     Image(systemName: "checkmark")
                         .font(.system(size: 11, weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.6))
+                        .foregroundStyle(GlassTheme.accent)
                 }
             }
             .padding(.horizontal, 18)
@@ -514,14 +459,12 @@ struct LifeProgressView: View {
 
             if !isLast {
                 Rectangle()
-                    .fill(.white.opacity(0.04))
+                    .fill(GlassTheme.separator.opacity(0.5))
                     .frame(height: 0.5)
                     .padding(.leading, 40)
             }
         }
     }
-
-    // MARK: - Helpers
 
     private func formatNet(_ value: Int) -> String {
         if value > 0 { return "+\(value)" }
