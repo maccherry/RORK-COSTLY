@@ -12,27 +12,27 @@
 			containerPortal = 105FC5722E9EAD3100EA8BCF /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 105FC5792E9EAD3100EA8BCF;
-			remoteInfo = CostlyLifeInMinutes;
+			remoteInfo = CostlySpendTimeWisely;
 		};
 		105FC5942E9EAD3200EA8BCF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 105FC5722E9EAD3100EA8BCF /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 105FC5792E9EAD3100EA8BCF;
-			remoteInfo = CostlyLifeInMinutes;
+			remoteInfo = CostlySpendTimeWisely;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		105FC57A2E9EAD3100EA8BCF /* CostlyLifeInMinutes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CostlyLifeInMinutes.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		105FC5892E9EAD3200EA8BCF /* CostlyLifeInMinutesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CostlyLifeInMinutesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		105FC5932E9EAD3200EA8BCF /* CostlyLifeInMinutesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CostlyLifeInMinutesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		105FC57A2E9EAD3100EA8BCF /* CostlySpendTimeWisely.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CostlySpendTimeWisely.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		105FC5892E9EAD3200EA8BCF /* CostlySpendTimeWiselyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CostlySpendTimeWiselyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		105FC5932E9EAD3200EA8BCF /* CostlySpendTimeWiselyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CostlySpendTimeWiselyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		105FC57C2E9EAD3100EA8BCF /* CostlyLifeInMinutes */ = {
+		105FC57C2E9EAD3100EA8BCF /* CostlySpendTimeWisely */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CostlyLifeInMinutes;
+			path = CostlySpendTimeWisely;
 			sourceTree = "<group>";
 		};
 		105FC58C2E9EAD3200EA8BCF /* CostlyLifeInMinutesTests */ = {
@@ -75,7 +75,7 @@
 		105FC5712E9EAD3100EA8BCF = {
 			isa = PBXGroup;
 			children = (
-				105FC57C2E9EAD3100EA8BCF /* CostlyLifeInMinutes */,
+				105FC57C2E9EAD3100EA8BCF /* CostlySpendTimeWisely */,
 				105FC58C2E9EAD3200EA8BCF /* CostlyLifeInMinutesTests */,
 				105FC5962E9EAD3200EA8BCF /* CostlyLifeInMinutesUITests */,
 				105FC57B2E9EAD3100EA8BCF /* Products */,
@@ -85,9 +85,9 @@
 		105FC57B2E9EAD3100EA8BCF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				105FC57A2E9EAD3100EA8BCF /* CostlyLifeInMinutes.app */,
-				105FC5892E9EAD3200EA8BCF /* CostlyLifeInMinutesTests.xctest */,
-				105FC5932E9EAD3200EA8BCF /* CostlyLifeInMinutesUITests.xctest */,
+				105FC57A2E9EAD3100EA8BCF /* CostlySpendTimeWisely.app */,
+				105FC5892E9EAD3200EA8BCF /* CostlySpendTimeWiselyTests.xctest */,
+				105FC5932E9EAD3200EA8BCF /* CostlySpendTimeWiselyUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		105FC5792E9EAD3100EA8BCF /* CostlyLifeInMinutes */ = {
+		105FC5792E9EAD3100EA8BCF /* CostlySpendTimeWisely */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 105FC59D2E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlyLifeInMinutes" */;
+			buildConfigurationList = 105FC59D2E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */;
 			buildPhases = (
 				105FC5762E9EAD3100EA8BCF /* Sources */,
 				105FC5772E9EAD3100EA8BCF /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				105FC57C2E9EAD3100EA8BCF /* CostlyLifeInMinutes */,
+				105FC57C2E9EAD3100EA8BCF /* CostlySpendTimeWisely */,
 			);
-			name = CostlyLifeInMinutes;
+			name = CostlySpendTimeWisely;
 			packageProductDependencies = (
 			);
-			productName = CostlyLifeInMinutes;
-			productReference = 105FC57A2E9EAD3100EA8BCF /* CostlyLifeInMinutes.app */;
+			productName = CostlySpendTimeWisely;
+			productReference = 105FC57A2E9EAD3100EA8BCF /* CostlySpendTimeWisely.app */;
 			productType = "com.apple.product-type.application";
 		};
-		105FC5882E9EAD3200EA8BCF /* CostlyLifeInMinutesTests */ = {
+		105FC5882E9EAD3200EA8BCF /* CostlySpendTimeWisely */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 105FC5A02E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlyLifeInMinutesTests" */;
+			buildConfigurationList = 105FC5A02E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */;
 			buildPhases = (
 				105FC5852E9EAD3200EA8BCF /* Sources */,
 				105FC5862E9EAD3200EA8BCF /* Frameworks */,
@@ -133,16 +133,16 @@
 			fileSystemSynchronizedGroups = (
 				105FC58C2E9EAD3200EA8BCF /* CostlyLifeInMinutesTests */,
 			);
-			name = CostlyLifeInMinutesTests;
+			name = CostlySpendTimeWisely;
 			packageProductDependencies = (
 			);
-			productName = CostlyLifeInMinutesTests;
-			productReference = 105FC5892E9EAD3200EA8BCF /* CostlyLifeInMinutesTests.xctest */;
+			productName = CostlySpendTimeWisely;
+			productReference = 105FC5892E9EAD3200EA8BCF /* CostlySpendTimeWiselyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		105FC5922E9EAD3200EA8BCF /* CostlyLifeInMinutesUITests */ = {
+		105FC5922E9EAD3200EA8BCF /* CostlySpendTimeWisely */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 105FC5A32E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlyLifeInMinutesUITests" */;
+			buildConfigurationList = 105FC5A32E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */;
 			buildPhases = (
 				105FC58F2E9EAD3200EA8BCF /* Sources */,
 				105FC5902E9EAD3200EA8BCF /* Frameworks */,
@@ -156,11 +156,11 @@
 			fileSystemSynchronizedGroups = (
 				105FC5962E9EAD3200EA8BCF /* CostlyLifeInMinutesUITests */,
 			);
-			name = CostlyLifeInMinutesUITests;
+			name = CostlySpendTimeWisely;
 			packageProductDependencies = (
 			);
-			productName = CostlyLifeInMinutesUITests;
-			productReference = 105FC5932E9EAD3200EA8BCF /* CostlyLifeInMinutesUITests.xctest */;
+			productName = CostlySpendTimeWisely;
+			productReference = 105FC5932E9EAD3200EA8BCF /* CostlySpendTimeWiselyUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 105FC5752E9EAD3100EA8BCF /* Build configuration list for PBXProject "CostlyLifeInMinutes" */;
+			buildConfigurationList = 105FC5752E9EAD3100EA8BCF /* Build configuration list for PBXProject "CostlySpendTimeWisely" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				105FC5792E9EAD3100EA8BCF /* CostlyLifeInMinutes */,
-				105FC5882E9EAD3200EA8BCF /* CostlyLifeInMinutesTests */,
-				105FC5922E9EAD3200EA8BCF /* CostlyLifeInMinutesUITests */,
+				105FC5792E9EAD3100EA8BCF /* CostlySpendTimeWisely */,
+				105FC5882E9EAD3200EA8BCF /* CostlySpendTimeWisely */,
+				105FC5922E9EAD3200EA8BCF /* CostlySpendTimeWisely */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		105FC58B2E9EAD3200EA8BCF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 105FC5792E9EAD3100EA8BCF /* CostlyLifeInMinutes */;
+			target = 105FC5792E9EAD3100EA8BCF /* CostlySpendTimeWisely */;
 			targetProxy = 105FC58A2E9EAD3200EA8BCF /* PBXContainerItemProxy */;
 		};
 		105FC5952E9EAD3200EA8BCF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 105FC5792E9EAD3100EA8BCF /* CostlyLifeInMinutes */;
+			target = 105FC5792E9EAD3100EA8BCF /* CostlySpendTimeWisely */;
 			targetProxy = 105FC5942E9EAD3200EA8BCF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -415,7 +415,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.rork.costly-life-in-minutes;
+				PRODUCT_BUNDLE_IDENTIFIER = Costly.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -452,7 +452,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = app.rork.costly-life-in-minutes;
+				PRODUCT_BUNDLE_IDENTIFIER = Costly.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -474,7 +474,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "app.rork.costly-life-in-minutes.tests";
+				PRODUCT_BUNDLE_IDENTIFIER = Costly.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -496,7 +496,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "app.rork.costly-life-in-minutes.tests";
+				PRODUCT_BUNDLE_IDENTIFIER = Costly.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -516,7 +516,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "app.rork.costly-life-in-minutes.uitests";
+				PRODUCT_BUNDLE_IDENTIFIER = Costly.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -536,7 +536,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "app.rork.costly-life-in-minutes.uitests";
+				PRODUCT_BUNDLE_IDENTIFIER = Costly.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -551,7 +551,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		105FC5752E9EAD3100EA8BCF /* Build configuration list for PBXProject "CostlyLifeInMinutes" */ = {
+		105FC5752E9EAD3100EA8BCF /* Build configuration list for PBXProject "CostlySpendTimeWisely" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				105FC59B2E9EAD3200EA8BCF /* Debug */,
@@ -560,7 +560,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		105FC59D2E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlyLifeInMinutes" */ = {
+		105FC59D2E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				105FC59E2E9EAD3200EA8BCF /* Debug */,
@@ -569,7 +569,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		105FC5A02E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlyLifeInMinutesTests" */ = {
+		105FC5A02E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				105FC5A12E9EAD3200EA8BCF /* Debug */,
@@ -578,7 +578,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		105FC5A32E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlyLifeInMinutesUITests" */ = {
+		105FC5A32E9EAD3200EA8BCF /* Build configuration list for PBXNativeTarget "CostlySpendTimeWisely" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				105FC5A42E9EAD3200EA8BCF /* Debug */,
