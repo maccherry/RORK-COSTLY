@@ -99,7 +99,7 @@ struct PaywallView: View {
                     .font(.satoshi(.light, size: 30))
                     .foregroundStyle(GlassTheme.textPrimary)
 
-                Text("Track every minute gained and lost.\nSee the true cost of your choices.")
+                Text("See the true cost of your choices.")
                     .font(.satoshi(.regular, size: 14))
                     .foregroundStyle(GlassTheme.textTertiary)
                     .multilineTextAlignment(.center)
@@ -155,7 +155,7 @@ struct PaywallView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 15)
+        .padding(.vertical, 12)
     }
 
     private var featureDivider: some View {
@@ -188,7 +188,7 @@ struct PaywallView: View {
         Button {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.65)) { selectedPlan = plan }
         } label: {
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 if let badge {
                     Text(badge)
                         .font(.satoshi(.bold, size: 8))
@@ -203,14 +203,14 @@ struct PaywallView: View {
                 }
 
                 Text(plan.rawValue)
-                    .font(.satoshi(.medium, size: 11))
+                    .font(.satoshi(.medium, size: 10))
                     .foregroundStyle(GlassTheme.textTertiary)
                     .textCase(.uppercase)
                     .tracking(1)
 
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text(price)
-                        .font(.satoshi(.bold, size: 22))
+                        .font(.satoshi(.bold, size: 20))
                         .foregroundStyle(GlassTheme.textPrimary)
                     Text(period)
                         .font(.satoshi(.regular, size: 10))
@@ -220,10 +220,8 @@ struct PaywallView: View {
                 Text(subtitle)
                     .font(.satoshi(.regular, size: 10))
                     .foregroundStyle(GlassTheme.textTertiary)
-
-                Spacer().frame(height: 2)
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, 12)
             .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 16)
@@ -266,7 +264,7 @@ struct PaywallView: View {
                 .tint(GlassTheme.textPrimary)
         }
         .padding(.horizontal, 18)
-        .padding(.vertical, 16)
+        .padding(.vertical, 14)
         .glassCard(cornerRadius: 14)
         .sensoryFeedback(.impact(weight: .light, intensity: 0.2), trigger: trialEnabled)
     }
