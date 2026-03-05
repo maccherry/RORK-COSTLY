@@ -13,6 +13,10 @@ struct LifeProgressView: View {
     private var netMinutes: Int { store.allTimeNetMinutes }
     private var todayNet: Int { store.todayNetMinutes + healthKit.healthMinutesBalance }
 
+    private var bioAge: Double {
+        store.profile.biologicalAge(netMinutes: store.allTimeNetMinutes + healthKit.healthMinutesBalance)
+    }
+
     private var costlyAge: Double {
         if healthKit.isAuthorized {
             return store.profile.costlyAge(
@@ -75,17 +79,28 @@ struct LifeProgressView: View {
                         .padding(.top, 12)
                         .premiumStagger(appeared: appeared, index: 0)
 
-                    mainProgressRing
+                    ageCard
                         .premiumStagger(appeared: appeared, index: 1)
 
-                    netBalanceBar
+                    mainProgressRing
                         .premiumStagger(appeared: appeared, index: 2)
 
-                    weeklyChart
+                    netBalanceBar
                         .premiumStagger(appeared: appeared, index: 3)
 
+                    if healthKit.isAuthorized {
+                        healthCard
+                            .premiumStagger(appeared: appeared, index: 4)
+                    }
+
+                    weeklyChart
+                        .premiumStagger(appeared: appeared, index: 5)
+
+                    lifeStatsCard
+                        .premiumStagger(appeared: appeared, index: 6)
+
                     milestoneSection
-                        .premiumStagger(appeared: appeared, index: 4)
+                        .premiumStagger(appeared: appeared, index: 7)
 
                     Spacer().frame(height: 90)
                 }
@@ -132,6 +147,42 @@ struct LifeProgressView: View {
             }
         }
         .padding(.horizontal, 4)
+    }
+
+    private var ageCard: some View {
+        HStack(spacing: 0) {
+            VStack(spacing: 6) {
+                Text("CHRONOLOGICAL")
+                    .font(.satoshi(.bold, size: 8))
+                    .foregroundStyle(GlassTheme.textTertiary)
+                    .tracking(1)
+                Text(String(format: "%.1f", store.profile.preciseAge))
+                    .font(.satoshi(.light, size: 30))
+                    .foregroundStyle(GlassTheme.textSecondary)
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
+            }
+            .frame(maxWidth: .infinity)
+
+            Rectangle()
+                .fill(GlassTheme.separator)
+                .frame(width: 0.5, height: 48)
+
+            VStack(spacing: 6) {
+                Text("BIOLOGICAL")
+                    .font(.satoshi(.bold, size: 8))
+                    .foregroundStyle(GlassTheme.textTertiary)
+                    .tracking(1)
+                Text(String(format: "%.1f", bioAge))
+                    .font(.satoshi(.light, size: 30))
+                    .foregroundStyle(bioAge <= store.profile.preciseAge ? GlassTheme.positive : GlassTheme.negative)
+                    .monospacedDigit()
+                    .contentTransition(.numericText())
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .padding(.vertical, 22)
+        .glassCard(cornerRadius: 18)
     }
 
     private var mainProgressRing: some View {
@@ -284,6 +335,29 @@ struct LifeProgressView: View {
         .glassCard(cornerRadius: 16)
     }
 
+    private var healthCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionHeader("HEALTH DATA")
+
+            VStack(spacing: 0) {
+                infoRow(icon: "figure.walk", label: "Steps Today", value: "\(healthKit.stepCount)", color: GlassTheme.accent)
+                infoDivider
+                infoRow(icon: "flame.fill", label: "Active Minutes", value: "\(healthKit.activeMinutes) min", color: GlassTheme.positive)
+                if healthKit.sleepHours > 0 {
+                    infoDivider
+                    infoRow(icon: "bed.double.fill", label: "Sleep", value: String(format: "%.1f hrs", healthKit.sleepHours), color: healthKit.sleepHours >= 7 ? GlassTheme.positive : GlassTheme.negative)
+                }
+                if healthKit.heartRate > 0 {
+                    infoDivider
+                    infoRow(icon: "heart.fill", label: "Heart Rate", value: "\(Int(healthKit.heartRate)) bpm", color: Color(red: 0.9, green: 0.35, blue: 0.4))
+                }
+                infoDivider
+                infoRow(icon: "plus.circle.fill", label: "Health Bonus", value: GlassTheme.formatMinutes(healthKit.healthMinutesBalance) + " min", color: GlassTheme.minuteColor(healthKit.healthMinutesBalance))
+            }
+            .glassCard(cornerRadius: 14)
+        }
+    }
+
     private var weeklyChart: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
@@ -348,6 +422,34 @@ struct LifeProgressView: View {
         .glassCard(cornerRadius: 16)
     }
 
+    private var lifeStatsCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionHeader("LIFE STATS")
+
+            VStack(spacing: 0) {
+                infoRow(icon: "arrow.up", label: "Minutes Gained", value: "+\(store.totalMinutesGained)", color: GlassTheme.positive)
+                infoDivider
+                infoRow(icon: "arrow.down", label: "Minutes Lost", value: "\(store.totalMinutesLost)", color: GlassTheme.negative)
+                infoDivider
+                infoRow(icon: "equal", label: "Net Balance", value: formatSigned(store.allTimeNetMinutes), color: GlassTheme.minuteColor(store.allTimeNetMinutes))
+                infoDivider
+
+                let days = Double(store.allTimeNetMinutes) / 1440.0
+                infoRow(
+                    icon: "calendar",
+                    label: days >= 0 ? "Days Added" : "Days Removed",
+                    value: String(format: "%+.1f", days),
+                    color: GlassTheme.minuteColor(store.allTimeNetMinutes)
+                )
+                infoDivider
+
+                let remaining = store.profile.estimatedLifeMinutesRemaining
+                infoRow(icon: "hourglass", label: "Est. Life Remaining", value: formatLargeMinutes(remaining), color: GlassTheme.textSecondary)
+            }
+            .glassCard(cornerRadius: 14)
+        }
+    }
+
     private var milestoneSection: some View {
         VStack(alignment: .leading, spacing: 14) {
             Text("MILESTONES")
@@ -389,6 +491,40 @@ struct LifeProgressView: View {
         }
     }
 
+    private func infoRow(icon: String, label: String, value: String, color: Color) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 12))
+                .foregroundStyle(color)
+                .frame(width: 24)
+
+            Text(label)
+                .font(.satoshi(.regular, size: 13))
+                .foregroundStyle(GlassTheme.textSecondary)
+            Spacer()
+            Text(value)
+                .font(.satoshi(.medium, size: 14))
+                .foregroundStyle(color)
+                .monospacedDigit()
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+    }
+
+    private var infoDivider: some View {
+        Rectangle()
+            .fill(GlassTheme.separator.opacity(0.5))
+            .frame(height: 0.5)
+            .padding(.leading, 48)
+    }
+
+    private func sectionHeader(_ text: String) -> some View {
+        Text(text)
+            .font(.satoshi(.bold, size: 9))
+            .foregroundStyle(GlassTheme.textTertiary)
+            .tracking(1.5)
+    }
+
     private func milestoneRow(icon: String, title: String, detail: String, achieved: Bool, isLast: Bool) -> some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
@@ -426,5 +562,15 @@ struct LifeProgressView: View {
                     .padding(.leading, 58)
             }
         }
+    }
+
+    private func formatSigned(_ value: Int) -> String {
+        value >= 0 ? "+\(value)" : "\(value)"
+    }
+
+    private func formatLargeMinutes(_ minutes: Int) -> String {
+        let years = minutes / 525960
+        let remainingMonths = (minutes % 525960) / 43830
+        return "\(years)y \(remainingMonths)m"
     }
 }

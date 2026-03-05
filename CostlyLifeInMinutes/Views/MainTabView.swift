@@ -93,7 +93,7 @@ struct MainTabView: View {
 
             tabItem(icon: "chart.bar", filledIcon: "chart.bar.fill", label: "Progress", tag: 1)
 
-            tabItem(icon: "person", filledIcon: "person.fill", label: "Profile", tag: 2)
+            tabItem(icon: "gearshape", filledIcon: "gearshape.fill", label: "Settings", tag: 2)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)

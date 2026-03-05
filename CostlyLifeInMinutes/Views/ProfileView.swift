@@ -6,10 +6,6 @@ struct ProfileView: View {
     @State private var showPaywall: Bool = false
     @State private var appeared: Bool = false
 
-    private var bioAge: Double {
-        store.profile.biologicalAge(netMinutes: store.allTimeNetMinutes + healthKit.healthMinutesBalance)
-    }
-
     var body: some View {
         ZStack {
             GlassTheme.bgPrimary.ignoresSafeArea()
@@ -20,22 +16,17 @@ struct ProfileView: View {
                         .padding(.top, 16)
                         .premiumStagger(appeared: appeared, index: 0)
 
-                    ageCard
+                    accountCard
                         .premiumStagger(appeared: appeared, index: 1)
 
-                    if healthKit.isAuthorized {
-                        healthCard
-                            .premiumStagger(appeared: appeared, index: 2)
-                    }
+                    preferencesCard
+                        .premiumStagger(appeared: appeared, index: 2)
 
-                    lifeStatsCard
+                    supportCard
                         .premiumStagger(appeared: appeared, index: 3)
 
-                    settingsCard
-                        .premiumStagger(appeared: appeared, index: 4)
-
                     footer
-                        .premiumStagger(appeared: appeared, index: 5)
+                        .premiumStagger(appeared: appeared, index: 4)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 100)
@@ -85,96 +76,9 @@ struct ProfileView: View {
         }
     }
 
-    private var ageCard: some View {
-        HStack(spacing: 0) {
-            VStack(spacing: 6) {
-                Text("CHRONOLOGICAL")
-                    .font(.satoshi(.bold, size: 8))
-                    .foregroundStyle(GlassTheme.textTertiary)
-                    .tracking(1)
-                Text(String(format: "%.1f", store.profile.preciseAge))
-                    .font(.satoshi(.light, size: 30))
-                    .foregroundStyle(GlassTheme.textSecondary)
-                    .monospacedDigit()
-                    .contentTransition(.numericText())
-            }
-            .frame(maxWidth: .infinity)
-
-            Rectangle()
-                .fill(GlassTheme.separator)
-                .frame(width: 0.5, height: 48)
-
-            VStack(spacing: 6) {
-                Text("BIOLOGICAL")
-                    .font(.satoshi(.bold, size: 8))
-                    .foregroundStyle(GlassTheme.textTertiary)
-                    .tracking(1)
-                Text(String(format: "%.1f", bioAge))
-                    .font(.satoshi(.light, size: 30))
-                    .foregroundStyle(bioAge <= store.profile.preciseAge ? GlassTheme.positive : GlassTheme.negative)
-                    .monospacedDigit()
-                    .contentTransition(.numericText())
-            }
-            .frame(maxWidth: .infinity)
-        }
-        .padding(.vertical, 22)
-        .glassCard(cornerRadius: 18)
-    }
-
-    private var healthCard: some View {
+    private var accountCard: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("HEALTH DATA")
-
-            VStack(spacing: 0) {
-                infoRow(icon: "figure.walk", label: "Steps Today", value: "\(healthKit.stepCount)", color: GlassTheme.accent)
-                divider
-                infoRow(icon: "flame.fill", label: "Active Minutes", value: "\(healthKit.activeMinutes) min", color: GlassTheme.positive)
-                if healthKit.sleepHours > 0 {
-                    divider
-                    infoRow(icon: "bed.double.fill", label: "Sleep", value: String(format: "%.1f hrs", healthKit.sleepHours), color: healthKit.sleepHours >= 7 ? GlassTheme.positive : GlassTheme.negative)
-                }
-                if healthKit.heartRate > 0 {
-                    divider
-                    infoRow(icon: "heart.fill", label: "Heart Rate", value: "\(Int(healthKit.heartRate)) bpm", color: Color(red: 0.9, green: 0.35, blue: 0.4))
-                }
-                divider
-                infoRow(icon: "plus.circle.fill", label: "Health Bonus", value: GlassTheme.formatMinutes(healthKit.healthMinutesBalance) + " min", color: GlassTheme.minuteColor(healthKit.healthMinutesBalance))
-            }
-            .glassCard(cornerRadius: 14)
-        }
-    }
-
-    private var lifeStatsCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("LIFE STATS")
-
-            VStack(spacing: 0) {
-                infoRow(icon: "arrow.up", label: "Minutes Gained", value: "+\(store.totalMinutesGained)", color: GlassTheme.positive)
-                divider
-                infoRow(icon: "arrow.down", label: "Minutes Lost", value: "\(store.totalMinutesLost)", color: GlassTheme.negative)
-                divider
-                infoRow(icon: "equal", label: "Net Balance", value: formatSigned(store.allTimeNetMinutes), color: GlassTheme.minuteColor(store.allTimeNetMinutes))
-                divider
-
-                let days = Double(store.allTimeNetMinutes) / 1440.0
-                infoRow(
-                    icon: "calendar",
-                    label: days >= 0 ? "Days Added" : "Days Removed",
-                    value: String(format: "%+.1f", days),
-                    color: GlassTheme.minuteColor(store.allTimeNetMinutes)
-                )
-                divider
-
-                let remaining = store.profile.estimatedLifeMinutesRemaining
-                infoRow(icon: "hourglass", label: "Est. Life Remaining", value: formatLargeMinutes(remaining), color: GlassTheme.textSecondary)
-            }
-            .glassCard(cornerRadius: 14)
-        }
-    }
-
-    private var settingsCard: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("SETTINGS")
+            sectionHeader("ACCOUNT")
 
             VStack(spacing: 0) {
                 settingsRow(icon: "crown", label: "Subscription", detail: store.profile.hasActiveSubscription ? "Active" : "Free") {
@@ -184,10 +88,32 @@ struct ProfileView: View {
                 settingsRow(icon: "arrow.clockwise", label: "Restore Purchases", detail: nil) {
                     store.setSubscriptionActive(true)
                 }
-                divider
+            }
+            .glassCard(cornerRadius: 14)
+        }
+    }
+
+    private var preferencesCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionHeader("PREFERENCES")
+
+            VStack(spacing: 0) {
                 settingsRow(icon: "heart.text.clipboard", label: "Health Access", detail: healthKit.isAuthorized ? "Connected" : "Off") {
                     Task { await healthKit.requestAuthorization() }
                 }
+                divider
+                settingsRow(icon: "bell", label: "Notifications", detail: "On") { }
+            }
+            .glassCard(cornerRadius: 14)
+        }
+    }
+
+    private var supportCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionHeader("SUPPORT")
+
+            VStack(spacing: 0) {
+                settingsRow(icon: "questionmark.circle", label: "Help Center", detail: nil) { }
                 divider
                 settingsRow(icon: "doc.text", label: "Terms of Service", detail: nil) { }
                 divider
@@ -226,27 +152,6 @@ struct ProfileView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(PremiumButtonStyle(scale: 0.98, opacity: 0.8))
-        .sensoryFeedback(.impact(weight: .light, intensity: 0.3), trigger: showPaywall)
-    }
-
-    private func infoRow(icon: String, label: String, value: String, color: Color) -> some View {
-        HStack(spacing: 10) {
-            Image(systemName: icon)
-                .font(.system(size: 12))
-                .foregroundStyle(color)
-                .frame(width: 24)
-
-            Text(label)
-                .font(.satoshi(.regular, size: 13))
-                .foregroundStyle(GlassTheme.textSecondary)
-            Spacer()
-            Text(value)
-                .font(.satoshi(.medium, size: 14))
-                .foregroundStyle(color)
-                .monospacedDigit()
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
     }
 
     private var divider: some View {
@@ -273,15 +178,5 @@ struct ProfileView: View {
                 .foregroundStyle(GlassTheme.textTertiary.opacity(0.3))
         }
         .padding(.top, 8)
-    }
-
-    private func formatSigned(_ value: Int) -> String {
-        value >= 0 ? "+\(value)" : "\(value)"
-    }
-
-    private func formatLargeMinutes(_ minutes: Int) -> String {
-        let years = minutes / 525960
-        let remainingMonths = (minutes % 525960) / 43830
-        return "\(years)y \(remainingMonths)m"
     }
 }
