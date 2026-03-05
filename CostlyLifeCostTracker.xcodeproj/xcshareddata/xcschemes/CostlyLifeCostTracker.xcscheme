@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "105FC5792E9EAD3100EA8BCF"
-               BuildableName = "CostlySpendTimeWisely.app"
-               BlueprintName = "CostlySpendTimeWisely"
-               ReferencedContainer = "container:CostlySpendTimeWisely.xcodeproj">
+               BuildableName = "CostlyLifeCostTracker.app"
+               BlueprintName = "CostlyLifeCostTracker"
+               ReferencedContainer = "container:CostlyLifeCostTracker.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "105FC5882E9EAD3200EA8BCF"
-               BuildableName = "CostlySpendTimeWiselyTests.xctest"
-               BlueprintName = "CostlySpendTimeWiselyTests"
-               ReferencedContainer = "container:CostlySpendTimeWisely.xcodeproj">
+               BuildableName = "CostlyLifeCostTrackerTests.xctest"
+               BlueprintName = "CostlyLifeCostTrackerTests"
+               ReferencedContainer = "container:CostlyLifeCostTracker.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "105FC5922E9EAD3200EA8BCF"
-               BuildableName = "CostlySpendTimeWiselyUITests.xctest"
-               BlueprintName = "CostlySpendTimeWiselyUITests"
-               ReferencedContainer = "container:CostlySpendTimeWisely.xcodeproj">
+               BuildableName = "CostlyLifeCostTrackerUITests.xctest"
+               BlueprintName = "CostlyLifeCostTrackerUITests"
+               ReferencedContainer = "container:CostlyLifeCostTracker.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "105FC5792E9EAD3100EA8BCF"
-            BuildableName = "CostlySpendTimeWisely.app"
-            BlueprintName = "CostlySpendTimeWisely"
-            ReferencedContainer = "container:CostlySpendTimeWisely.xcodeproj">
+            BuildableName = "CostlyLifeCostTracker.app"
+            BlueprintName = "CostlyLifeCostTracker"
+            ReferencedContainer = "container:CostlyLifeCostTracker.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -86,9 +86,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "105FC5792E9EAD3100EA8BCF"
-            BuildableName = "CostlySpendTimeWisely.app"
-            BlueprintName = "CostlySpendTimeWisely"
-            ReferencedContainer = "container:CostlySpendTimeWisely.xcodeproj">
+            BuildableName = "CostlyLifeCostTracker.app"
+            BlueprintName = "CostlyLifeCostTracker"
+            ReferencedContainer = "container:CostlyLifeCostTracker.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
