@@ -10,7 +10,10 @@ struct LogActivityView: View {
     @State private var loggedActivityName: String?
     @State private var appeared: Bool = false
     @State private var shutterScale: CGFloat = 1.0
+    @State private var showShareSheet: Bool = false
+    @State private var shareImage: UIImage?
     let store: DataStore
+    var costlyAge: Double = 0
 
     private var filteredActivities: [Activity] {
         ActivityDatabase.search(searchText)
@@ -307,28 +310,54 @@ struct LogActivityView: View {
                     Spacer()
                 }
 
-                Button {
-                    store.logActivity(activity)
-                    Task {
-                        try? await Task.sleep(for: .seconds(0.4))
-                        dismiss()
+                HStack(spacing: 10) {
+                    Button {
+                        store.logActivity(activity)
+                        Task {
+                            try? await Task.sleep(for: .seconds(0.4))
+                            dismiss()
+                        }
+                    } label: {
+                        Text("Log This")
+                            .font(.satoshi(.bold, size: 16))
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .background(GlassTheme.textPrimary)
+                            .clipShape(.rect(cornerRadius: 14))
                     }
-                } label: {
-                    Text("Log This")
-                        .font(.satoshi(.bold, size: 16))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(GlassTheme.textPrimary)
-                        .clipShape(.rect(cornerRadius: 14))
+                    .buttonStyle(PremiumCTAButtonStyle())
+                    .sensoryFeedback(activity.isPositive ? .success : .warning, trigger: store.entries.count)
+
+                    Button {
+                        store.logActivity(activity)
+                        shareImage = ShareCardGenerator.renderImage(
+                            activityName: activity.name,
+                            activityIcon: activity.icon,
+                            minutesDelta: activity.minutesDelta,
+                            costlyAge: costlyAge
+                        )
+                        showShareSheet = true
+                    } label: {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundStyle(.white)
+                            .frame(width: 50, height: 50)
+                            .background(GlassTheme.accent)
+                            .clipShape(.rect(cornerRadius: 14))
+                    }
+                    .buttonStyle(PremiumCTAButtonStyle())
                 }
-                .buttonStyle(PremiumCTAButtonStyle())
-                .sensoryFeedback(activity.isPositive ? .success : .warning, trigger: store.entries.count)
             }
             .padding(22)
             .glassCard(cornerRadius: 22)
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
+            .sheet(isPresented: $showShareSheet) {
+                if let image = shareImage {
+                    ShareSheet(items: [image])
+                }
+            }
         }
     }
 }

@@ -7,6 +7,19 @@ struct MainTabView: View {
     @State private var showLogSheet: Bool = false
     @State private var previousTab: Int = 0
 
+    private var costlyAge: Double {
+        if healthKit.isAuthorized {
+            return store.profile.costlyAge(
+                netMinutes: store.allTimeNetMinutes,
+                healthMinutes: healthKit.healthMinutesBalance,
+                steps: healthKit.stepCount,
+                sleepHours: healthKit.sleepHours,
+                activeMinutes: healthKit.activeMinutes
+            )
+        }
+        return store.profile.baselineCostlyAge
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             GlassTheme.bgPrimary.ignoresSafeArea()
@@ -20,7 +33,7 @@ struct MainTabView: View {
                             removal: .opacity.combined(with: .offset(x: previousTab < selectedTab ? -30 : 30))
                         ))
                 case 1:
-                    TimeBankView(store: store)
+                    LifeProgressView(store: store, healthKit: healthKit)
                         .transition(.asymmetric(
                             insertion: .opacity.combined(with: .offset(x: previousTab < 1 ? 30 : -30)),
                             removal: .opacity.combined(with: .offset(x: previousTab < selectedTab ? -30 : 30))
@@ -42,7 +55,7 @@ struct MainTabView: View {
             plusButton
         }
         .fullScreenCover(isPresented: $showLogSheet) {
-            LogActivityView(store: store)
+            LogActivityView(store: store, costlyAge: costlyAge)
         }
     }
 
@@ -78,7 +91,7 @@ struct MainTabView: View {
         HStack(spacing: 4) {
             tabItem(icon: "house", filledIcon: "house.fill", label: "Home", tag: 0)
 
-            tabItem(icon: "building.columns", filledIcon: "building.columns.fill", label: "Time Bank", tag: 1)
+            tabItem(icon: "chart.bar", filledIcon: "chart.bar.fill", label: "Progress", tag: 1)
 
             tabItem(icon: "person", filledIcon: "person.fill", label: "Profile", tag: 2)
         }
