@@ -119,7 +119,7 @@ struct PaywallView: View {
             featureRow(
                 icon: "waveform.path.ecg",
                 title: "Your True Biological Age",
-                subtitle: "Powered by Apple Health data — watch your real age drop as you make better choices every single day"
+                subtitle: "Driven by real-time health intelligence from Apple Health and your connected wearable — precision aging, redefined"
             )
             featureDivider
             featureRow(
@@ -127,12 +127,7 @@ struct PaywallView: View {
                 title: "Every Minute Visualized",
                 subtitle: "See a live timeline of minutes gained and lost — the accountability system your future self will thank you for"
             )
-            featureDivider
-            featureRow(
-                icon: "trophy.fill",
-                title: "Earn Back Your Life",
-                subtitle: "Turn positive habits into real rewards — the only app that pays you in time for living better"
-            )
+
         }
         .glassCard(cornerRadius: 18)
     }
