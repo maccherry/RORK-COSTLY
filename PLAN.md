@@ -14,7 +14,7 @@ A premium, existential time-ledger app. Pure black OLED aesthetic with white ser
 - **Education**: "Every choice has a price. We measure it in minutes." — animated counter ticking down
 - **Value Prop**: "See what your habits are really costing you." — shows example: 🚬 Cigarette → −11 minutes
 - **Personalization**: User enters their name and birthdate (used to calculate estimated life remaining)
-- **Hard Paywall**: Monthly & Yearly subscription options with savings badge + a special **OKX campaign banner** — "Get 1 year FREE: Sign up with OKX" that deep-links to OKX. Restore purchases link at the bottom.
+- **Hard Paywall**: Monthly & Yearly subscription options with savings badge. Restore purchases link at the bottom.
 
 ### Home Screen
 
@@ -22,7 +22,6 @@ A premium, existential time-ledger app. Pure black OLED aesthetic with white ser
 - **Life balance bar** — a thin horizontal line showing your cumulative minutes gained vs lost
 - **Today's log** — vertical timeline of entries (e.g. "☕ Coffee −2 min", "🏃 Run +26 min") with timestamps
 - **Running total** section showing: Today / This Week / All Time
-- **USDC balance preview** — small card showing redeemable positive minutes converted to USDC value
 
 ### Floating Camera Button
 
@@ -35,8 +34,6 @@ A premium, existential time-ledger app. Pure black OLED aesthetic with white ser
 
 - User avatar, name, and member-since date
 - **Life stats**: Total minutes gained, total lost, net balance, estimated days added/removed
-- **USDC Wallet section**: Shows accumulated positive minutes, current USDC value, and a "Connect Wallet" button (placeholder for wallet connection flow)
-- **OKX Campaign**: Banner to claim free year if not yet redeemed
 - Settings: Subscription status, Restore Purchases, Terms, Privacy
 
 ### Activity Database
@@ -65,15 +62,14 @@ A premium, existential time-ledger app. Pure black OLED aesthetic with white ser
 
 1. **Splash Screen** — Black screen, "Costly" fades in with serif font, tagline appears below
 2. **Onboarding (3 education pages)** — Paged horizontal scroll with dramatic copy and subtle animations
-3. **Paywall** — Monthly/Yearly toggle, OKX campaign offer, pricing cards on black
-4. **Home** — Hero number, today's timeline, weekly stats, USDC preview
+3. **Paywall** — Monthly/Yearly toggle, pricing cards on black
+4. **Home** — Hero number, today's timeline, weekly stats
 5. **Camera Scan** — Camera view (or placeholder) → item recognition → confirm log
 6. **Manual Log** — Search predefined activities, tap to log with timestamp
-7. **Profile** — Stats, wallet, settings, subscription management
+7. **Profile** — Stats, settings, subscription management
 
 ---
 
 ## **App Icon**
 
 - Pure black background with a minimal white hourglass symbol — thin, elegant lines. The sand appears to be running out. Premium and existential.
-
